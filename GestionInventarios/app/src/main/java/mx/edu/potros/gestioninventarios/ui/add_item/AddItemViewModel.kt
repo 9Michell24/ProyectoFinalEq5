@@ -1,13 +1,13 @@
-package mx.edu.potros.gestioninventarios.ui.notifications
+package mx.edu.potros.gestioninventarios.ui.add_item
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class AddItemViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+        value = "This is an Add Item Fragment"
     }
     val text: LiveData<String> = _text
 }

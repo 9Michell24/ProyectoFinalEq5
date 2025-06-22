@@ -12,14 +12,20 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="mx.edu.potros.gestioninventarios.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_add_item"
+        android:name="mx.edu.potros.gestioninventarios.ui.add_item.AddItemFragment"
+        android:label="@string/title_add"
+        tools:layout="@layout/fragment_add_item" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="mx.edu.potros.gestioninventarios.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_movement"
+        android:name="mx.edu.potros.gestioninventarios.ui.movement.MovementFragment"
+        android:label="@string/title_movement"
+        tools:layout="@layout/fragment_movement" />
+
+    <fragment
+        android:id="@+id/navigation_report"
+        android:name="mx.edu.potros.gestioninventarios.ui.report.ReportFragment"
+        android:label="@string/title_report"
+        tools:layout="@layout/fragment_report" />
 </navigation>
