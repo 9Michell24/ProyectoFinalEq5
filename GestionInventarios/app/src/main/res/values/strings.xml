@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">GestionInventarios</string>
+    <string name="title_home">Inicio</string>
+    <string name="title_add">Registrar</string>
+    <string name="title_movement">Movimientos</string>
+    <string name="title_report">Reporte</string>
+    <string name="login">Iniciar Sesion</string>
 </resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="mx.edu.potros.gestioninventarios.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_add_item"
+        android:name="mx.edu.potros.gestioninventarios.ui.add_item.AddItemFragment"
+        android:label="@string/title_add"
+        tools:layout="@layout/fragment_add_item" />
+
+    <fragment
+        android:id="@+id/navigation_movement"
+        android:name="mx.edu.potros.gestioninventarios.ui.movement.MovementFragment"
+        android:label="@string/title_movement"
+        tools:layout="@layout/fragment_movement" />
+
+    <fragment
+        android:id="@+id/navigation_report"
+        android:name="mx.edu.potros.gestioninventarios.ui.report.ReportFragment"
+        android:label="@string/title_report"
+        tools:layout="@layout/fragment_report" />
+</navigation>
