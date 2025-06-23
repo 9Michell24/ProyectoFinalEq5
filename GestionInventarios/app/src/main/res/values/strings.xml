@@ -9,4 +9,5 @@
     <string name="restablecer">Restablecer contraseña</string>
     <string name="generar">Generar codigo</string>
     <string name="confirmar">Confirmar contraseña</string>
+    <string name="guardar">Guardar</string>
 </resources>

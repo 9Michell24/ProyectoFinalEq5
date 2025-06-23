@@ -79,6 +79,7 @@
             android:background="@color/campos_texto"/>
 
         <Button
+            android:id="@+id/btnCodigo"
             android:layout_width="111dp"
             android:layout_height="match_parent"
             android:background="@drawable/round_button"
@@ -90,7 +91,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRestContra"
         android:layout_width="237dp"
         android:layout_height="40dp"
         android:layout_marginTop="225dp"
