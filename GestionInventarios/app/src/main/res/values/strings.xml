@@ -8,4 +8,5 @@
     <string name="register">Registrarse</string>
     <string name="restablecer">Restablecer contraseña</string>
     <string name="generar">Generar codigo</string>
+    <string name="confirmar">Confirmar contraseña</string>
 </resources>
