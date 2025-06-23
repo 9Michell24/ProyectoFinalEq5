@@ -6,9 +6,11 @@
 
     <ImageView
         android:id="@+id/regresar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/icone_fleche_gauche_verte" />
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/greenArrow" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,7 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:textColor="@color/black"
-        android:text="Ingresa una nueva contraseña para que vuelvas a disfrutar de nuestra aplicación"
+        android:layout_gravity="center"
+        android:textSize="16dp"
+        android:text="Ingresa tu correo para cambiar la contraseña"
         android:layout_marginHorizontal="25dp"/>
 
     <LinearLayout
@@ -43,7 +47,7 @@
             android:src="@drawable/mail_227"/>
 
         <EditText
-            android:id="@+id/contraRest"
+            android:id="@+id/correoRest"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
@@ -67,11 +71,11 @@
             android:src="@drawable/verification"/>
 
         <EditText
-            android:id="@+id/contraConfi"
+            android:id="@+id/codigoRest"
             android:layout_width="200dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="Repetir contraseña"
+            android:hint="Codigo"
             android:background="@color/campos_texto"/>
 
         <Button
