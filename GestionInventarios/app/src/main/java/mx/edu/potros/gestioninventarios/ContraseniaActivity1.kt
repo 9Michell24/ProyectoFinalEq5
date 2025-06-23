@@ -1,4 +1,4 @@
 package mx.edu.potros.gestioninventarios
 
-class ContraseñaActivity2 {
+class ContraseniaActivity1 {
 }
