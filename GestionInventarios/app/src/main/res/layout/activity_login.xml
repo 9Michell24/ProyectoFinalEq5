@@ -9,7 +9,43 @@
     tools:context=".LoginActivity">
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="¡Bienvenidos!"
+        android:layout_gravity="center"
+        android:textSize="25dp"
+        android:textStyle="bold"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Inicia sesión"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:layout_marginBottom="45dp"
+        android:textColor="@color/primary1"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/correoIni"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="25dp"
+        android:hint="Correo"
+        android:background="@color/campos_texto"/>
+
+    <EditText
+        android:id="@+id/contraIni"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginTop="30dp"
+        android:hint="Contraseña"
+        android:background="@color/campos_texto"/>
 
     <!-- El View es lo que vi para que el boton estuviera abajo
          Si pones algo arriba de aqui no deberia de afectar
@@ -25,12 +61,37 @@
         android:id="@+id/btnLogin"
         android:layout_width="237dp"
         android:layout_height="40dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/round_button"
         android:backgroundTint="@color/primary1"
         android:text="@string/login"
         android:textColor="@color/white"
         android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/btnRegistrar"
+        android:layout_width="237dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/primary1"
+        android:text="@string/register"
+        android:textColor="@color/white"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Olvidaste tu contraseña?"
+        android:layout_gravity="center" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Click aquí"
+        android:textStyle="bold"
+        android:textSize="16dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="40dp"/>
 
 
 </LinearLayout>

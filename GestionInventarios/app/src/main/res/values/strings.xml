@@ -5,4 +5,5 @@
     <string name="title_movement">Movimientos</string>
     <string name="title_report">Reporte</string>
     <string name="login">Iniciar Sesion</string>
+    <string name="register">Registrarse</string>
 </resources>
