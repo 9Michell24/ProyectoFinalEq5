@@ -29,23 +29,44 @@
         android:textColor="@color/primary1"
         android:textStyle="bold"/>
 
-    <EditText
-        android:id="@+id/correoIni"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="25dp"
-        android:hint="Correo"
-        android:background="@color/campos_texto"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp">
+        <EditText
+            android:id="@+id/correoIni"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="25dp"
+            android:hint="Correo"
+            android:background="@color/campos_texto"/>
 
-    <EditText
-        android:id="@+id/contraIni"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginHorizontal="25dp"
-        android:layout_marginTop="30dp"
-        android:hint="Contraseña"
-        android:background="@color/campos_texto"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp">
+
+        <EditText
+            android:id="@+id/contraIni"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="25dp"
+            android:hint="Contraseña"
+            android:background="@color/campos_texto"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
 
     <Button
