@@ -6,4 +6,6 @@
     <string name="title_report">Reporte</string>
     <string name="login">Iniciar Sesion</string>
     <string name="register">Registrarse</string>
+    <string name="restablecer">Restablecer contraseña</string>
+    <string name="generar">Generar codigo</string>
 </resources>

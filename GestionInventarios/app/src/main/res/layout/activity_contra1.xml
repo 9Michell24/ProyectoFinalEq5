@@ -1,6 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/regresar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/icone_fleche_gauche_verte" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Restablecer contraseña"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:textSize="25dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/black"
+        android:text="Ingresa una nueva contraseña para que vuelvas a disfrutar de nuestra aplicación"
+        android:layout_marginHorizontal="25dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/mail_227"/>
+
+        <EditText
+            android:id="@+id/contraRest"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="example@joinus.com"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/verification"/>
+
+        <EditText
+            android:id="@+id/contraConfi"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="Repetir contraseña"
+            android:background="@color/campos_texto"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Generar codigo"
+            android:backgroundTint="@color/primary1"
+            android:textColor="@color/white"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="237dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="225dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/primary1"
+        android:text="@string/restablecer"
+        android:textColor="@color/white"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
