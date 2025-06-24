@@ -1,4 +1,4 @@
-package mx.edu.potros.gestioninventarios.ui.all_articles
+package mx.edu.potros.gestioninventarios.ui.config
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -7,17 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import mx.edu.potros.gestioninventarios.R
 
-class All_articlesFragment : Fragment() {
+class ConfigFragment : Fragment() {
 
     companion object {
-        fun newInstance() = All_articlesFragment()
+        fun newInstance() = ConfigFragment()
     }
 
-    private val viewModel: AllArticlesViewModel by viewModels()
+    private val viewModel: ConfigViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,28 +28,13 @@ class All_articlesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_all_articles, container, false)
+        return inflater.inflate(R.layout.fragment_config, container, false)
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val ivVolver: ImageView = view.findViewById(R.id.iv_back_all_articles)
-
-        val tv : ImageView = view.findViewById(R.id.provisional)
-
-        val tvAgregarArticulo : TextView = view.findViewById(R.id.agregarArticulo)
-
-        tv.setOnClickListener {
-
-            findNavController().navigate(R.id.detailProduct)
-        }
-
-        tvAgregarArticulo.setOnClickListener {
-
-            findNavController().navigate(R.id.newArticulo)
-        }
+        val ivVolver: ImageView = view.findViewById(R.id.regresar)
 
 
         ivVolver.setOnClickListener {
@@ -59,11 +43,5 @@ class All_articlesFragment : Fragment() {
             findNavController().popBackStack()
 
         }
-
-
-
-
     }
-
-
 }

@@ -31,6 +31,15 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+        val btnRegister : Button = findViewById(R.id.btnRegistrar)
+        btnRegister.setOnClickListener {
+
+            var intento = Intent(this, Registro::class.java)
+            startActivity(intento)
+
+        }
+
+
 
 
 

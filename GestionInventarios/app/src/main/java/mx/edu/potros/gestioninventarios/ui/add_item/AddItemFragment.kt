@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentAddItemBinding
 
 class AddItemFragment : Fragment() {
@@ -28,10 +31,7 @@ class AddItemFragment : Fragment() {
         _binding = FragmentAddItemBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textAddItem
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+
         return root
     }
 
@@ -39,4 +39,26 @@ class AddItemFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val ivVolver: ImageView = view.findViewById(R.id.regresar)
+
+
+        ivVolver.setOnClickListener {
+
+            //popBackStack es para volver al fragment anterior
+            findNavController().popBackStack()
+
+        }
+
+
+
+
+    }
+
+
+
 }

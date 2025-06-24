@@ -54,4 +54,17 @@
         android:label="Nueva Categoria"
         tools:layout="@layout/fragment_activity_newcategoria" />
 
+
+    <fragment
+        android:id="@+id/newArticulo"
+        android:name="mx.edu.potros.gestioninventarios.ui.add_item.AddItemFragment"
+        android:label="Agregar Articulo"
+        tools:layout="@layout/activity_registro_articulo" />
+
+    <fragment
+        android:id="@+id/configFragment"
+        android:name="mx.edu.potros.gestioninventarios.ui.config.ConfigFragment"
+        android:label="Configuracion"
+        tools:layout="@layout/fragment_config" />
+
 </navigation>

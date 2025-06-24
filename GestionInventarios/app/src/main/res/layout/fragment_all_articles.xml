@@ -93,6 +93,7 @@
 
 
         <TextView
+            android:id="@+id/agregarArticulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_new_product"
@@ -126,17 +127,13 @@
         android:background="@drawable/round_layout2">
 
 
-        <TextView
+        <ImageView
             android:id="@+id/provisional"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="No implementado aún..."
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/primary1">
+            android:layout_height="300dp"
+            android:background="@drawable/elementos_articulos">
 
-        </TextView>
+        </ImageView>
 
     </LinearLayout>
 
