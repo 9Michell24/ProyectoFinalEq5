@@ -11,7 +11,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/ic_regresar_cate"
+        android:background="@drawable/greenarrow"
         android:id="@+id/iv_back_categories">
 
     </ImageView>
