@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -12,9 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GestionInventarios"
         tools:targetApi="31">
-        <activity
-            android:name=".Registro"
-            android:exported="false" />
+
+        <activity android:name=".ContraseniaActivity1" android:exported="false" />
+
+        <activity android:name=".ContraseniaActivity2" android:exported="false" />
+
+        <activity android:name=".Registro" android:exported="false" />
+
         <activity
             android:name=".LoginActivity"
             android:exported="true"
@@ -22,15 +25,11 @@
             android:theme="@style/Theme.GestionInventarios">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false">
 
-        </activity>
+        <activity android:name=".MainActivity" android:exported="false" />
+
     </application>
-
 </manifest>

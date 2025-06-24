@@ -3,6 +3,7 @@ package mx.edu.potros.gestioninventarios
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -40,8 +41,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-
-
-
+        val textClick: TextView = findViewById(R.id.textClick)
+        textClick.setOnClickListener {
+            val intento = Intent(this, ContraseniaActivity1::class.java)
+            startActivity(intento)
+        }
     }
 }
