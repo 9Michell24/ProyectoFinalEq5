@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
@@ -39,6 +40,12 @@ class activity_articulo_detalle : Fragment() {
 
         val ivVolver: ImageView = view.findViewById(R.id.regresar)
 
+        val btnEntSal : Button = view.findViewById(R.id.btnEntSal)
+        btnEntSal.setOnClickListener {
+
+            findNavController().navigate(R.id.navigation_movement)
+
+        }
 
         ivVolver.setOnClickListener {
 

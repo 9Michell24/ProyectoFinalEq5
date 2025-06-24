@@ -29,7 +29,13 @@ class Registro : AppCompatActivity() {
             finish()
 
         }
+        val btnRegistrar : Button = findViewById(R.id.btnRegistro)
+        btnRegistrar.setOnClickListener {
 
+            var intento = Intent(this, LoginActivity::class.java)
+            startActivity(intento)
+
+        }
 
     }
 
