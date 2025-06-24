@@ -42,7 +42,7 @@ class All_articlesFragment : Fragment() {
 
         tv.setOnClickListener {
 
-            findNavController().navigate(R.id.categoriesFragment)
+            findNavController().navigate(R.id.detailProduct)
         }
 
         ivVolver.setOnClickListener {

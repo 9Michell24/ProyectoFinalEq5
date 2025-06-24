@@ -1,4 +1,4 @@
-package mx.edu.potros.gestioninventarios
+package mx.edu.potros.gestioninventarios.ui.new_categories
 
 import androidx.lifecycle.ViewModel
 

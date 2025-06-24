@@ -41,5 +41,17 @@
         android:label="TodosLosProductos"
         tools:layout="@layout/fragment_all_articles" />
 
+    <fragment
+        android:id="@+id/detailProduct"
+        android:name="mx.edu.potros.gestioninventarios.ui.detail_article.activity_articulo_detalle"
+        android:label="DetalleProducto"
+        tools:layout="@layout/fragment_activity_articulo_detalle" />
+
+
+    <fragment
+        android:id="@+id/newCategories"
+        android:name="mx.edu.potros.gestioninventarios.ui.new_categories.activity_newcategoria"
+        android:label="Nueva Categoria"
+        tools:layout="@layout/fragment_activity_newcategoria" />
 
 </navigation>
