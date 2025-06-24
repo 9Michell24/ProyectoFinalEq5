@@ -10,4 +10,6 @@
     <string name="generar">Generar codigo</string>
     <string name="confirmar">Confirmar contraseña</string>
     <string name="guardar">Guardar</string>
+    <string name="editar">Editar</string>
+    <string name="entradas_salidas">Entradas/salidas</string>
 </resources>
