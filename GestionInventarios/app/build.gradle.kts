@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    compileSdkVersion(33)
     namespace = "mx.edu.potros.gestioninventarios"
     compileSdk = 35
 
@@ -54,4 +55,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("androidx.palette:palette:1.0.0")
 }

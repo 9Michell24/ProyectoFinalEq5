@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/regresar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/greenArrow" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="¡Bienvenidos!"
+        android:text="Restablecer contraseña"
         android:textColor="@color/black"
         android:layout_gravity="center"
         android:textSize="25dp"
@@ -23,12 +26,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Inicia sesión"
+        android:textColor="@color/black"
         android:layout_gravity="center"
-        android:textSize="20dp"
-        android:layout_marginBottom="45dp"
-        android:textColor="@color/primary1"
-        android:textStyle="bold"/>
+        android:textSize="16dp"
+        android:text="Ingresa tu correo para cambiar la contraseña"
+        android:layout_marginHorizontal="25dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/mail_227"/>
+
+        <EditText
+            android:id="@+id/correoRest"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="example@joinus.com"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,82 +68,38 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/icone_utilisateur" />
+            android:src="@drawable/verification"/>
 
         <EditText
-            android:id="@+id/correoIni"
-            android:layout_width="match_parent"
+            android:id="@+id/codigoRest"
+            android:layout_width="200dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="Correo"
+            android:hint="Codigo"
             android:background="@color/campos_texto"/>
 
+        <Button
+            android:id="@+id/btnCodigo"
+            android:layout_width="111dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_button"
+            android:backgroundTint="@color/primary1"
+            android:text="Generar codigo"
+            android:textColor="@color/white"
+            android:textSize="11dp" />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:layout_marginHorizontal="25dp"
-        android:background="@color/campos_texto">
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/icone_de_cadenas_de_securite_noir"/>
-
-        <EditText
-            android:id="@+id/contraIni"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:hint="Contraseña"
-            android:background="@color/campos_texto"/>
-
-    </LinearLayout>
-
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRestContra"
         android:layout_width="237dp"
         android:layout_height="40dp"
-        android:layout_marginTop="205dp"
+        android:layout_marginTop="225dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/round_button"
         android:backgroundTint="@color/primary1"
-        android:text="@string/login"
+        android:text="@string/restablecer"
         android:textColor="@color/white"
         android:layout_gravity="center"/>
-
-    <Button
-        android:id="@+id/btnRegistrar"
-        android:layout_width="237dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/round_button"
-        android:backgroundTint="@color/primary1"
-        android:text="@string/register"
-        android:textColor="@color/white"
-        android:layout_gravity="center"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¿Olvidaste tu contraseña?"
-        android:layout_gravity="center" />
-
-    <TextView
-        android:id="@+id/textClick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Click aquí"
-        android:textStyle="bold"
-        android:textSize="16dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="40dp"/>
-
 
 </LinearLayout>
