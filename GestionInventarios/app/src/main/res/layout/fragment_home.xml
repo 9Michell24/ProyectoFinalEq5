@@ -4,7 +4,175 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.home.HomeFragment">
+
+
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_settings"
+        android:layout_gravity="end"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/iv_config">
+
+    </ImageView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/title_home"
+        android:textSize="40sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/text1">
+
+    </TextView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/round_layout"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/all_articles"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp">
+
+        </TextView>
+
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            >
+            
+            <TextView
+                android:id="@+id/see_datail_article"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/see_underlined_detail"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginLeft="30dp"
+                >
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/number_article"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginLeft="170dp"
+
+                android:layout_marginBottom="20dp"
+                android:text="49"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold">
+
+            </TextView>
+            
+            
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:background="@drawable/round_layout2"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
+
+
+        <TextView
+            android:id="@+id/category_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/underline_category"
+            android:gravity="left"
+            android:textColor="@color/primary1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="20sp"
+            android:layout_marginTop="20dp">
+
+        </TextView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            >
+
+            <ImageView
+                android:id="@+id/graphic_home"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:background="@drawable/grafica">
+
+            </ImageView>
+
+
+            <!--
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                >
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+
+            -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No implementado aún..."
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary1">
+
+            </TextView>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+
 
     <TextView
         android:id="@+id/text_home"
@@ -19,4 +187,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 </LinearLayout>

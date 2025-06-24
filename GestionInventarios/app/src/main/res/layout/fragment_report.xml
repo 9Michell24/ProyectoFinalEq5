@@ -7,34 +7,192 @@
     android:layout_height="match_parent"
     tools:context=".ui.report.ReportFragment">
 
-    <TextView
-        android:id="@+id/text_report"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/title_report"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/text1">
+
+    </TextView>
+
+
+    <LinearLayout
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:text="Prueba de texto al cambiar a reportes"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="40dp">
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/round_layout_gray">
+
+            <EditText
+                android:id="@+id/et_search_report"
+                android:layout_width="255dp"
+                android:layout_height="match_parent"
+                android:text="@string/search_report"
+                android:textColor="@color/text_search"
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"
+                android:background="@android:color/transparent"
+                >
+
+            </EditText>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/ic_search"
+                android:layout_gravity="center"
+                android:id="@+id/iv_search_report">
+
+            </ImageView>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/ic_calendar"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/iv_dates_report">
+
+        </ImageView>
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:background="@drawable/round_layout"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
+
+
+        <ImageView
+            android:id="@+id/graphic_home"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:background="@drawable/grafica">
+
+        </ImageView>
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="370dp"
+        android:background="@drawable/round_layout2"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/all_articles"
+                android:gravity="left"
+                android:textColor="@color/primary1"
+                android:textSize="22sp"
+                android:layout_marginLeft="20dp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp">
+
+            </TextView>
+
+
+            <TextView
+                android:id="@+id/tv_all_articles_report"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="49"
+                android:gravity="end"
+                android:textColor="@color/primary1"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="10dp">
+
+            </TextView>
+            
+
+        </LinearLayout>
+
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/available_articles"
+            android:gravity="left"
+            android:textColor="@color/primary1"
+            android:textSize="22sp"
+            android:layout_marginLeft="20dp"
+            android:textStyle="bold"
+            android:layout_marginTop="30dp">
+
+        </TextView>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="5dp"
+            >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+        <TextView
+            android:id="@+id/see_articles_reports"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/more_datail_underline"
+            android:gravity="left"
+            android:textColor="@color/primary1"
+            android:textSize="18sp"
+            android:layout_gravity=""
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="20dp"
+            android:textStyle="bold">
+
+        </TextView>
+
+
+        
+        
+
+    </LinearLayout>
+
+
 
 
 </LinearLayout>

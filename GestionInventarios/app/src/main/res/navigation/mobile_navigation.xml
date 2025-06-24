@@ -28,4 +28,17 @@
         android:name="mx.edu.potros.gestioninventarios.ui.report.ReportFragment"
         android:label="@string/title_report"
         tools:layout="@layout/fragment_report" />
+
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="mx.edu.potros.gestioninventarios.ui.categories.CategoriesFragment"
+        android:label="Categorías"
+        tools:layout="@layout/fragment_categories" />
+
+    <fragment
+        android:id="@+id/allProdutsFragment"
+        android:name="mx.edu.potros.gestioninventarios.ui.all_articles.All_articlesFragment"
+        android:label="TodosLosProductos"
+        tools:layout="@layout/fragment_all_articles" />
+
 </navigation>
