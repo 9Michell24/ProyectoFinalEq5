@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import mx.edu.potros.gestioninventarios.R
 
@@ -36,6 +37,13 @@ class All_articlesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val ivVolver: ImageView = view.findViewById(R.id.iv_back_all_articles)
+
+        val tv : TextView = view.findViewById(R.id.provisional)
+
+        tv.setOnClickListener {
+
+            findNavController().navigate(R.id.categoriesFragment)
+        }
 
         ivVolver.setOnClickListener {
 

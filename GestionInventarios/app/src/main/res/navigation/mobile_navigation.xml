@@ -41,4 +41,5 @@
         android:label="TodosLosProductos"
         tools:layout="@layout/fragment_all_articles" />
 
+
 </navigation>

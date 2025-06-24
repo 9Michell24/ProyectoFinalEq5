@@ -15,7 +15,7 @@
             android:layout_height="30dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:src="@drawable/greenArrow" />
+            android:src="@drawable/greenarrow" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_marginTop="30dp"
-            android:src="@drawable/Rueda_de_color"
+            android:src="@drawable/rueda_de_color"
             android:layout_gravity="center"/>
 
         <Button
