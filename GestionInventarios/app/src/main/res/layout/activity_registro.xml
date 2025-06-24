@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".Registro">
+
+    <ImageView
+        android:id="@+id/regresar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/greenArrow" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Registrate ahora"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:textSize="25dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Registro"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:layout_marginBottom="40dp"
+        android:textColor="@color/primary1"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/icone_utilisateur" />
+
+        <EditText
+            android:id="@+id/nombreRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="Nombre"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/mail" />
+
+        <EditText
+            android:id="@+id/correoRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="Correo"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/calendar_calendar" />
+
+        <EditText
+            android:id="@+id/fechaNacimiento"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="Fecha de nacimiento"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/_" />
+
+        <EditText
+            android:id="@+id/generoRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="Genero"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/icone_de_cadenas_de_securite_noir"/>
+
+        <EditText
+            android:id="@+id/contrasena"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="Contraseña"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/campos_texto">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/icone_de_cadenas_de_securite_noir"/>
+
+        <EditText
+            android:id="@+id/confirmContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:hint="Confirmar contraseña"
+            android:background="@color/campos_texto"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnRegistro"
+        android:layout_width="237dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/primary1"
+        android:text="Registrate aquí"
+        android:textColor="@color/white"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
