@@ -3,7 +3,9 @@ package mx.edu.potros.gestioninventarios
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,29 +24,43 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-        val btnLogin : Button = findViewById(R.id.btnLogin)
-        btnLogin.setOnClickListener {
+        val correo: EditText = findViewById(R.id.correoIni)
+        val contraseña: EditText = findViewById(R.id.contraIni)
+        val btnLogin: Button = findViewById(R.id.btnLogin)
+        val btnRegister: Button = findViewById(R.id.btnRegistrar)
+        val textClick: TextView = findViewById(R.id.textClick)
 
-            var intento = Intent(this, MainActivity::class.java)
+        btnLogin.setOnClickListener {
+            val correoTexto = correo.text.toString().trim()
+            val contraTexto = contraseña.text.toString().trim()
+
+            // Validaciones
+            if (!correoTexto.contains("@")) {
+                Toast.makeText(this, "Ingresa un correo válido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (contraTexto.isEmpty()) {
+                Toast.makeText(this, "La contraseña no puede estar vacía", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Si pasa validación, iniciar sesión
+            val intento = Intent(this, MainActivity::class.java)
             startActivity(intento)
             finish()
-
         }
 
-
-        val btnRegister : Button = findViewById(R.id.btnRegistrar)
         btnRegister.setOnClickListener {
-
-            var intento = Intent(this, Registro::class.java)
+            val intento = Intent(this, Registro::class.java)
             startActivity(intento)
-
         }
 
-
-        val textClick: TextView = findViewById(R.id.textClick)
         textClick.setOnClickListener {
             val intento = Intent(this, ContraseniaActivity1::class.java)
             startActivity(intento)
         }
+
+
     }
 }
