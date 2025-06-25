@@ -57,7 +57,7 @@ class Registro : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Si todo es válido, ir a Login
+//             Si_todo es valido, ir a Login
             val intento = Intent(this, LoginActivity::class.java)
             startActivity(intento)
             finish()

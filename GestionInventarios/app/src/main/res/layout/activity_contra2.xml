@@ -78,7 +78,7 @@
             android:inputType="textPassword"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="Contraseña"
+            android:hint="Confirmar contraseña"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>
