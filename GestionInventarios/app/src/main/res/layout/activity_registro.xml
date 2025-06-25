@@ -152,6 +152,7 @@
             android:id="@+id/contrasena"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:inputType="textPassword"
             android:layout_marginLeft="5dp"
             android:hint="Contraseña"
             android:background="@color/campos_texto"/>
@@ -175,6 +176,7 @@
         <EditText
             android:id="@+id/confirmContrasena"
             android:layout_width="match_parent"
+            android:inputType="textPassword"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint="Confirmar contraseña"
