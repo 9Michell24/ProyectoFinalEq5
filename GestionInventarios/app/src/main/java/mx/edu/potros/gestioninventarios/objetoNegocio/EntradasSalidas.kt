@@ -4,5 +4,6 @@ data class EntradasSalidas (
         var articulo : Articulo,
         var cantidad : Int,
         var fecha : String,
-        var motivo : String
+        var motivo : String,
+        var isEntrada : Boolean
 )

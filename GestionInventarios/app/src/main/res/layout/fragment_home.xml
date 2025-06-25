@@ -152,13 +152,16 @@
 
             -->
 
-            <ImageView
+            <GridView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/categorias_home"
+                android:layout_weight="7.2"
+                android:numColumns="1"
+                android:verticalSpacing="12dp"
+                android:id="@+id/lista_categorias_home"
                 >
 
-            </ImageView>
+            </GridView>
 
 
         </LinearLayout>

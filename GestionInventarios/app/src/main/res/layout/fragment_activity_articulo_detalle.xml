@@ -29,6 +29,7 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/detail_product_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -46,6 +47,7 @@
             android:textStyle="bold"
             android:textSize="30dp"
             android:text="Vans"
+            android:id="@+id/detail_product_name"
             android:gravity="center"/>
 
         <ImageView
@@ -74,6 +76,7 @@
             android:textSize="17dp"
             android:textColor="@color/black"
             android:gravity="center"
+            android:id="@+id/detail_product_description"
             android:text="Clásicos, cómodos y con estilo. Estos tenis Vans son el complemento perfecto para cualquier outfit urbano."/>
 
         <TextView
@@ -84,6 +87,7 @@
             android:textStyle="bold"
             android:textSize="30dp"
             android:gravity="center"
+            android:id="@+id/detail_product_stock"
             android:text="Cantidad en stock: 17"/>
 
         <LinearLayout

@@ -52,6 +52,7 @@
         >
 
         <TextView
+            android:id="@+id/by_category_category"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="Electronica"
@@ -63,6 +64,7 @@
         </TextView>
 
         <View
+            android:id="@+id/by_category_line"
             android:layout_width="80dp"
             android:layout_height="3dp"
             android:layout_gravity="center"
@@ -88,6 +90,17 @@
         android:background="@drawable/round_layout2">
 
 
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"                android:layout_weight="7.2"
+            android:numColumns="1"
+            android:verticalSpacing="12dp"
+            android:id="@+id/grid_view_by_categories">
+
+        </GridView>
+
+
+<!--
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -160,15 +173,8 @@
 
         </TextView>
 
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:layout_marginRight="20dp"-->
-<!--            android:layout_marginLeft="20dp">-->
 
-<!--        </androidx.recyclerview.widget.RecyclerView>-->
-
+-->
 
     </LinearLayout>
 

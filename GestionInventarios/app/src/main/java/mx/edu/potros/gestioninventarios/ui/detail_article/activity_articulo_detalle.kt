@@ -1,5 +1,6 @@
 package mx.edu.potros.gestioninventarios.ui.detail_article
 
+import android.graphics.Color
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import mx.edu.potros.gestioninventarios.R
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 
 class activity_articulo_detalle : Fragment() {
 
@@ -53,6 +55,31 @@ class activity_articulo_detalle : Fragment() {
             findNavController().popBackStack()
 
         }
+
+
+
+        val nombre = arguments?.getString("nombre")
+        val categoria = arguments?.getString("categoria")
+        val cantidad = arguments?.getInt("cantidad")
+        val position = arguments?.getInt("position")
+        val descripcion = arguments?.getString("descripcion")
+
+        val name : TextView = view.findViewById(R.id.detail_product_name)
+        val category : TextView = view.findViewById(R.id.detail_product_category)
+        val stock : TextView = view.findViewById(R.id.detail_product_stock)
+        val description : TextView = view.findViewById(R.id.detail_product_description)
+
+
+        if(position != null) {
+            category.setTextColor(Color.parseColor(DataProvider.listaArticulos[position].categoria.color))
+        }
+
+        name.setText(nombre)
+        category.setText(categoria)
+        stock.setText("Cantidad en stock: " + cantidad.toString())
+        description.setText(descripcion)
+
+
     }
 
 
