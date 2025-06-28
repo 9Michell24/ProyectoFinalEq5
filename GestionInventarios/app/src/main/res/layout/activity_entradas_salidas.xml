@@ -58,12 +58,13 @@
             android:layout_marginLeft="8dp"
             android:src="@drawable/label" />
 
-        <EditText
-            android:id="@+id/seleccionArticulo"
+        <Spinner
+            android:id="@+id/spinner"
             android:layout_width="290dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint=" Seleccionar artículo"
+            android:entries="@array/opciones_spinner"
             android:background="@color/campos_texto"/>
 
         <ImageView

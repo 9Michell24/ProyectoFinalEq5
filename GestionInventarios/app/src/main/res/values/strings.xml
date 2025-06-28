@@ -14,7 +14,12 @@
     <string name="entradas_salidas">Entradas/salidas</string>
 
 
-
+    <string-array name="opciones_spinner">
+        <item>Selecciona un artículo</item>
+        <item>Refrigerador</item>
+        <item>Microondas</item>
+        <item>Lavadora</item>
+    </string-array>
 
     <string name="see_underlined_detail"><u>Ver detalle</u></string>
     <string name="underline_category"><u>Categorias</u></string>
