@@ -5,6 +5,7 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.InputFilter
+import android.util.Log
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -71,43 +72,30 @@ class Registro : AppCompatActivity() {
             val confContraTexto = confContra.text.toString().trim()
             val generoSeleccionado = spinnerGenero.selectedItem.toString()
             val fechaNacimientoTexto = etFecha.text.toString().trim()
+            val edad = calcularEdad(fechaNacimientoTexto)
 
             if (nombreTexto.isEmpty() || correoTexto.isEmpty() ||
                 contraTexto.isEmpty() || confContraTexto.isEmpty() || fechaNacimientoTexto.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }
-
-            if (!correoTexto.contains("@")) {
+            }else if (!correoTexto.contains("@")) {
                 Toast.makeText(this, "Ingresa un correo válido", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }
-
-            if (generoSeleccionado == "Género") {
+            }else if (generoSeleccionado == "Género") {
                 Toast.makeText(this, "Selecciona un género válido", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }
-
-            val edad = calcularEdad(fechaNacimientoTexto)
-            if (edad < 14) {
+            }else if (edad < 14) {
                 Toast.makeText(this, "Debes tener al menos 13 años", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }
-
-            if (edad > 99) {
+            }else if (edad > 99) {
                 Toast.makeText(this, "La edad máxima permitida es 99 años", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }
-
-            if (contraTexto != confContraTexto) {
+            }else if (contraTexto != confContraTexto) {
                 Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
+            }else{
+                signIn(correoTexto, contraTexto)
             }
-
-            // Si todo es válido, ir a Login
-            val intento = Intent(this, LoginActivity::class.java)
-            startActivity(intento)
-            finish()
         }
     }
 
@@ -127,5 +115,28 @@ class Registro : AppCompatActivity() {
         } catch (e: Exception) {
             0
         }
+    }
+
+    fun signIn (email: String, password: String){
+        Log.d( "INFO", "email: ${email}, password: ${password}")
+        auth.createUserWithEmailAndPassword (email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information Log.d(tag: "INFO", msg: "signInWithEmail: success")
+                    Log.d("INFO", "signInWithEmail:success")
+                    val user = auth.currentUser
+                    val intento = Intent(this, LoginActivity::class.java)
+                    startActivity(intento)
+                    finish()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("ERROR","signInWithEmail: failure", task.exception)
+                    Toast.makeText(
+                        baseContext,
+                        "El registro falló.",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
     }
 }
