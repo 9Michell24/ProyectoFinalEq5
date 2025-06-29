@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "926435256900",
+    "project_id": "gestioninventarios-8c048",
+    "storage_bucket": "gestioninventarios-8c048.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926435256900:android:73296911898e5f6df22a11",
+        "android_client_info": {
+          "package_name": "mx.edu.potros.gestioninventarios"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJUjL2ZwaYQScYnkVvAdvy4WxsLDXF2fc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
