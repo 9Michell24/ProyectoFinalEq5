@@ -33,7 +33,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/profilepicture" />
+        android:src="@drawable/profilepic" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -79,8 +79,12 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="20/03/1976"
-            android:background="@color/campos_texto"/>
+            android:focusable="false"
+            android:clickable="true"
+            android:inputType="none"
+            android:background="@color/campos_texto"
+            android:text="20/03/1976"
+            android:hint="Fecha de nacimiento"/>
 
     </LinearLayout>
 
@@ -99,12 +103,11 @@
             android:layout_margin="10dp"
             android:src="@drawable/signo" />
 
-        <EditText
-            android:id="@+id/generoRegistro"
+        <Spinner
+            android:id="@+id/spinnerConfig"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:hint="Masculino"
+            android:layout_marginStart="5dp"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>

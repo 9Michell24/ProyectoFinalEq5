@@ -79,8 +79,12 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="20/03/1976"
-            android:background="@color/campos_texto"/>
+            android:focusable="false"
+            android:clickable="true"
+            android:inputType="none"
+            android:background="@color/campos_texto"
+            android:text="20/03/1976"
+            android:hint="Fecha de nacimiento"/>
 
     </LinearLayout>
 
