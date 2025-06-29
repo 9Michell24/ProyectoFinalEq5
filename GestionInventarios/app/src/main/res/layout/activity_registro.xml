@@ -57,6 +57,8 @@
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint="Nombre"
+            android:inputType="text"
+            android:maxLength="10"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>
@@ -80,6 +82,8 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
+            android:inputType="textEmailAddress"
+            android:maxLength="30"
             android:hint="Correo"
             android:background="@color/campos_texto"/>
 
@@ -100,11 +104,12 @@
             android:src="@drawable/calendar_calendar" />
 
         <EditText
-            android:id="@+id/fechaNacimiento"
+            android:id="@+id/fechaNacimientoRegistro"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="Fecha de nacimiento"
+            android:hint="Selecciona una fecha"
+            android:focusable="false"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>
@@ -124,12 +129,13 @@
             android:layout_margin="10dp"
             android:src="@drawable/signo" />
 
-        <EditText
-            android:id="@+id/generoRegistro"
+        <Spinner
+            android:id="@+id/spinnerRegistro"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint="Genero"
+            android:entries="@array/opciones_spinner2"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>
@@ -153,6 +159,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:inputType="textPassword"
+            android:maxLength="16"
             android:layout_marginLeft="5dp"
             android:hint="Contraseña"
             android:background="@color/campos_texto"/>
@@ -180,6 +187,7 @@
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint="Confirmar contraseña"
+            android:maxLength="16"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>
