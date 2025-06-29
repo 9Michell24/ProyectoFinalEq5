@@ -21,6 +21,13 @@
         <item>Lavadora</item>
     </string-array>
 
+    <string-array name="opciones_spinner1">
+        <item>Selecciona un artículo</item>
+        <item>Electrónica</item>
+        <item>Ropa</item>
+        <item>Muebles</item>
+    </string-array>
+
     <string name="see_underlined_detail"><u>Ver detalle</u></string>
     <string name="underline_category"><u>Categorias</u></string>
 

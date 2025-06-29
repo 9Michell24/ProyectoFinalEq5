@@ -52,6 +52,7 @@
         <EditText
             android:id="@+id/nombreArticulo"
             android:layout_width="match_parent"
+            android:maxLength="20"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint="Nombre del artículo"
@@ -80,6 +81,8 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
+            android:inputType="number"
+            android:maxLength="2"
             android:hint="Cantidad"
             android:background="@color/campos_texto"/>
 
@@ -98,26 +101,24 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
             android:src="@drawable/list_ul" />
 
-        <EditText
-            android:id="@+id/categoríaArtículo"
-            android:layout_width="290dp"
+        <Spinner
+            android:id="@+id/spinnerCategoríaArtículo"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="Categoría"
+            android:hint=" Seleccionar artículo"
+            android:entries="@array/opciones_spinner1"
             android:background="@color/campos_texto"/>
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/caret_down" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="90dp"
         android:orientation="horizontal"
         android:layout_marginTop="30dp"
         android:gravity="center"
@@ -133,8 +134,9 @@
         <EditText
             android:id="@+id/descripciónArticulo"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="80dp"
             android:layout_marginLeft="5dp"
+            android:maxLength="40"
             android:hint="Descripción"
             android:background="@color/campos_texto"/>
 
@@ -161,6 +163,8 @@
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint="Costo"
+            android:inputType="numberDecimal"
+            android:maxLength="7"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>
