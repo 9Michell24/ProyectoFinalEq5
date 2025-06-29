@@ -15,21 +15,21 @@
 
 
     <string-array name="opciones_spinner">
-        <item>Selecciona un artículo</item>
+        <item enabled="false">Selecciona un artículo</item>
         <item>Refrigerador</item>
         <item>Microondas</item>
         <item>Lavadora</item>
     </string-array>
 
     <string-array name="opciones_spinner1">
-        <item>Selecciona un artículo</item>
+        <item enabled="false">Selecciona un artículo</item>
         <item>Electrónica</item>
         <item>Ropa</item>
         <item>Muebles</item>
     </string-array>
 
     <string-array name="opciones_spinner2">
-        <item>Género</item>
+        <item enabled="false">Género</item>
         <item>Masculino</item>
         <item>Femenino</item>
         <item>Prefiero no decir</item>

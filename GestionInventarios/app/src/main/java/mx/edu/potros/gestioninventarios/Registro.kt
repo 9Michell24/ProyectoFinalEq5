@@ -126,6 +126,13 @@ class Registro : AppCompatActivity() {
                     Log.d("INFO", "signInWithEmail:success")
                     val user = auth.currentUser
                     val intento = Intent(this, LoginActivity::class.java)
+
+                    Toast.makeText(
+                        this,
+                        "Usuario registrado con éxito",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                     startActivity(intento)
                     finish()
                 } else {
