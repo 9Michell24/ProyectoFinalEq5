@@ -5,17 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentMovementBinding
-import java.util.Calendar
+import java.util.*
 
 class MovementFragment : Fragment() {
 
@@ -27,12 +24,8 @@ class MovementFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(MovementViewModel::class.java)
-
         _binding = FragmentMovementBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -45,9 +38,35 @@ class MovementFragment : Fragment() {
 
         val ivVolver: ImageView = view.findViewById(R.id.regresar)
         val btnGuar: Button = view.findViewById(R.id.btnGuardarEntradasSalidas)
-        val spinner = view.findViewById<android.widget.Spinner>(R.id.spinner)
+        val spinner = view.findViewById<Spinner>(R.id.spinner)
+        val editTextFecha = view.findViewById<EditText>(R.id.fechaArticulos)
+        val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
+        val radioEntradas = view.findViewById<RadioButton>(R.id.radioEntradas)
+        val radioSalidas = view.findViewById<RadioButton>(R.id.radioSalidas)
 
-        val adapter = android.widget.ArrayAdapter.createFromResource(
+        // Toggle visual con RadioButtons
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioEntradas -> {
+                    radioEntradas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    radioEntradas.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+
+                    radioSalidas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+                    radioSalidas.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                }
+
+                R.id.radioSalidas -> {
+                    radioSalidas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    radioSalidas.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+
+                    radioEntradas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+                    radioEntradas.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                }
+            }
+        }
+
+        // Spinner
+        val adapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.opciones_spinner,
             android.R.layout.simple_spinner_item
@@ -59,22 +78,16 @@ class MovementFragment : Fragment() {
             override fun onItemSelected(
                 parent: AdapterView<*>, view: View?, position: Int, id: Long
             ) {
-                val opcionSeleccionada = parent.getItemAtPosition(position).toString()
                 if (position != 0) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Seleccionaste: $opcionSeleccionada",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val opcionSeleccionada = parent.getItemAtPosition(position).toString()
+                    Toast.makeText(requireContext(), "Seleccionaste: $opcionSeleccionada", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Nada seleccionado
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        val editTextFecha = view.findViewById<EditText>(R.id.fechaArticulos)
+        // Calendario
         editTextFecha.setOnClickListener {
             val calendario = Calendar.getInstance()
             val año = calendario.get(Calendar.YEAR)
@@ -89,14 +102,17 @@ class MovementFragment : Fragment() {
             datePicker.show()
         }
 
+        // Botón guardar
         btnGuar.setOnClickListener {
             if (spinner.selectedItemPosition == 0) {
-                Toast.makeText(requireContext(), "Por favor selecciona una artículo válido", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Por favor selecciona un artículo válido", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             findNavController().navigate(R.id.categoriesFragment)
         }
 
+        // Botón regresar
         ivVolver.setOnClickListener {
             findNavController().popBackStack()
         }
