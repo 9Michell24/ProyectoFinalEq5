@@ -1,4 +1,4 @@
-package mx.edu.potros.gestioninventarios
+package mx.edu.potros.gestioninventarios.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,14 +6,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
+import mx.edu.potros.gestioninventarios.R
 
 class LoginActivity : AppCompatActivity() {
 
@@ -31,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin: Button = findViewById(R.id.btnLogin)
         val btnRegister: Button = findViewById(R.id.btnRegistrar)
         val textClick: TextView = findViewById(R.id.textClick)
-        val currentUser= auth.currentUser
+      //  val currentUser= auth.currentUser
 
         btnLogin.setOnClickListener {
             val correoTexto = correo.text.toString().trim()
@@ -78,6 +76,8 @@ class LoginActivity : AppCompatActivity() {
 
     public override fun onStart() {
         super.onStart()
+
+
         val currentUser=auth.currentUser
         if(currentUser!=null){
             goToMain(currentUser)

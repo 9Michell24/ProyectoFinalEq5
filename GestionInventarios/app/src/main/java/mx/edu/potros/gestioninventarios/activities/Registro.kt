@@ -1,4 +1,4 @@
-package mx.edu.potros.gestioninventarios
+package mx.edu.potros.gestioninventarios.activities
 
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -7,13 +7,11 @@ import android.os.Bundle
 import android.text.InputFilter
 import android.util.Log
 import android.widget.*
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.Firebase
+import mx.edu.potros.gestioninventarios.R
 import java.util.Calendar
 import java.util.Locale
 
@@ -134,7 +132,7 @@ class Registro : AppCompatActivity() {
                     ).show()
 
                     startActivity(intento)
-                    finish()
+                   // finish()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("ERROR","signInWithEmail: failure", task.exception)

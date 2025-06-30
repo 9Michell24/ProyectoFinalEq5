@@ -1,4 +1,4 @@
-package mx.edu.potros.gestioninventarios
+package mx.edu.potros.gestioninventarios.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,12 +9,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import mx.edu.potros.gestioninventarios.R
 
-class ContraseniaActivity2: AppCompatActivity() {
+class ContraseniaActivity1 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_contra2)
+        setContentView(R.layout.activity_contra1)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -22,27 +23,27 @@ class ContraseniaActivity2: AppCompatActivity() {
             insets
         }
 
-        val contra: EditText = findViewById(R.id.contraRest)
-        val contraConf: EditText = findViewById(R.id.contraConf)
-        val btnConfContra: Button = findViewById(R.id.btnConfContra)
+        val restCorreo: EditText = findViewById(R.id.correoRest)
+        val codigo: EditText = findViewById(R.id.codigoRest)
+        val btnRestContra: Button = findViewById(R.id.btnRestContra)
 
-        btnConfContra.setOnClickListener {
-            val contraTexto = contra.text.toString().trim()
-            val contraConfTexto = contraConf.text.toString().trim()
+        btnRestContra.setOnClickListener {
+            val correoTexto = restCorreo.text.toString().trim()
+            val codigoTexto = codigo.text.toString().trim()
 
             // Validaciones
-            if (contraTexto.isEmpty() || contraConfTexto.isEmpty()) {
+            if (correoTexto.isEmpty() || codigoTexto.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (contraTexto != contraConfTexto) {
-                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+            if (!correoTexto.contains("@")) {
+                Toast.makeText(this, "Ingresa un correo válido", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             // Si pasa validación, continuar
-            val intento = Intent(this, LoginActivity::class.java)
+            val intento = Intent(this, ContraseniaActivity2::class.java)
             startActivity(intento)
             finish()
         }
