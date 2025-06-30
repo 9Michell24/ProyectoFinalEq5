@@ -72,7 +72,8 @@
             android:layout_height="35dp"
             android:background="@drawable/ic_filter"
             android:layout_marginLeft="5dp"
-            android:id="@+id/iv_dates_report">
+            android:contentDescription="Filtrar"
+            android:id="@+id/iv_filter_all_articles">
 
         </ImageView>
 

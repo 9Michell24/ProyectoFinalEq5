@@ -91,6 +91,10 @@ class LoginActivity : AppCompatActivity() {
                     val user=auth.currentUser
                     goToMain(user!!)
                 }
+
+                else{
+                    Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                }
             }
     }
 }

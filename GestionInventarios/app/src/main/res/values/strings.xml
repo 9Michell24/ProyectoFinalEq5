@@ -4,7 +4,7 @@
     <string name="title_add">Registrar</string>
     <string name="title_movement">Movimientos</string>
     <string name="title_report">Reporte</string>
-    <string name="login">Iniciar Sesion</string>
+    <string name="login">Iniciar Sesión</string>
     <string name="register">Registrarse</string>
     <string name="restablecer">Restablecer contraseña</string>
     <string name="generar">Generar codigo</string>
@@ -37,22 +37,22 @@
 
 
     <string name="see_underlined_detail"><u>Ver detalle</u></string>
-    <string name="underline_category"><u>Categorias</u></string>
+    <string name="underline_category">Categorías</string>
 
 
-    <string name="available_articles">Articulos disponibles</string>
-    <string name="more_datail_underline"><u> Mas detalles </u> </string>
-    <string name="search_report">Buscar un articulo</string>
+    <string name="available_articles">Artículos disponibles</string>
+    <string name="more_datail_underline"><u> Más detalles </u> </string>
+    <string name="search_report">Buscar un artículo</string>
 
 
-    <string name="categories_title">Categorias</string>
-    <string name="btn_new_category">Nueva Categoria</string>
-    <string name="erase_category"><u>Eliminar Categoria</u></string>
+    <string name="categories_title">Categorías</string>
+    <string name="btn_new_category">Nueva Categoría</string>
+    <string name="erase_category"><u>Eliminar Categoría</u></string>
 
 
-    <string name="add_new_product">Agregar articulo</string>
+    <string name="add_new_product">Agregar artículo</string>
 
 
-    <string name="all_articles">Todos los articulos</string>
+    <string name="all_articles">Todos los artículos</string>
 
 </resources>

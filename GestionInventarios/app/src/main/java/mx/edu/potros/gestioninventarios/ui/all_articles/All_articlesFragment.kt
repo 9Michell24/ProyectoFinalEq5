@@ -1,8 +1,8 @@
 package mx.edu.potros.gestioninventarios.ui.all_articles
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,15 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.CheckBox
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
-import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 import mx.edu.potros.gestioninventarios.ui.home.HomeViewModel
 
@@ -33,6 +34,9 @@ class All_articlesFragment : Fragment() {
 
     private var adaptador: AdaptadorListAllArticles? = null
     private lateinit var homeViewModel: HomeViewModel
+
+    private val categoriasSeleccionadas = ArrayList<String>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +64,14 @@ class All_articlesFragment : Fragment() {
 
         val tvAgregarArticulo : TextView = view.findViewById(R.id.agregarArticulo)
         val ivAgregarArticulo : ImageView = view.findViewById(R.id.iv_add_article)
+
+
+        val ivFilter : ImageView = view.findViewById(R.id.iv_filter_all_articles)
+
+
+        ivFilter.setOnClickListener{
+            mostrarDialogoCategorias()
+        }
 
 
         tvAgregarArticulo.setOnClickListener {
@@ -91,6 +103,39 @@ class All_articlesFragment : Fragment() {
 
     }
 
+
+
+    private fun mostrarDialogoCategorias() {
+        val checkboxes = DataProvider.listaCategorias.map { categoria ->
+            CheckBox(requireContext()).apply {
+                text = categoria.nombre
+                isChecked = categoria.nombre in categoriasSeleccionadas
+            }
+        }
+
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(40, 40, 40, 40)
+            checkboxes.forEach { addView(it) }
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Selecciona Categorías")
+            .setView(layout)
+            .setPositiveButton("Aplicar") { _, _ ->
+                categoriasSeleccionadas.clear()
+                categoriasSeleccionadas.addAll(
+                    checkboxes.filter { it.isChecked }.map { it.text.toString() }
+                )
+                aplicarFiltro(categoriasSeleccionadas)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun aplicarFiltro(filtros: ArrayList<String>) {
+
+    }
 
 
 

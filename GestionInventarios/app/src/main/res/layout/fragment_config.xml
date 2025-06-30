@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Configuracion">
+    tools:context=".ui.config.ConfigFragment">
 
     <ImageView
         android:id="@+id/regresar"

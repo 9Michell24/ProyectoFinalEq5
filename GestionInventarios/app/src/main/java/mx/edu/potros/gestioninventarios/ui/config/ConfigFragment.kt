@@ -87,7 +87,7 @@ class ConfigFragment : Fragment() {
         spinnerConfig.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val generoSeleccionado = parent.getItemAtPosition(position).toString()
-                Toast.makeText(requireContext(), "Seleccionaste: $generoSeleccionado", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(), "Seleccionaste: $generoSeleccionado", Toast.LENGTH_SHORT).show()
                 // Aquí puedes guardar el valor en una variable o ViewModel si lo necesitas
             }
 
