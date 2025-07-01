@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Registrate ahora"
+        android:text="Regístrate ahora"
         android:textColor="@color/black"
         android:layout_gravity="center"
         android:textSize="25dp"
@@ -200,7 +200,7 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/round_button"
         android:backgroundTint="@color/primary1"
-        android:text="Registrate aquí"
+        android:text="Regístrate aquí"
         android:textColor="@color/white"
         android:layout_gravity="center"/>
 

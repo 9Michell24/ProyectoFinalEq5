@@ -16,7 +16,7 @@
             android:id="@+id/tv_category_name_report"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Electronica"
+            android:text="Electrónica"
             android:padding="3dp"
             android:layout_marginLeft="10dp"
             android:textColor="@color/white"
