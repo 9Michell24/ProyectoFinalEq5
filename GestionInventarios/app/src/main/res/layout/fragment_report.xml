@@ -40,7 +40,7 @@
                 android:id="@+id/et_search_report"
                 android:layout_width="255dp"
                 android:layout_height="match_parent"
-                android:text="@string/search_report"
+                android:hint="@string/search_report"
                 android:textColor="@color/text_search"
                 android:textStyle="bold"
                 android:layout_marginLeft="10dp"

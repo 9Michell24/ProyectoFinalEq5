@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentReportBinding
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 
 class ReportFragment : Fragment() {
 
@@ -63,6 +64,16 @@ class ReportFragment : Fragment() {
             val endDate = selection.second
             // Aquí puedes usar startDate y endDate
         }
+
+        var cantidad : Int = 0
+
+        for(e in DataProvider.listaEntradasSalidas){
+            if (e.isEntrada){
+                cantidad = cantidad + e.cantidad
+            }
+        }
+
+        view.findViewById<TextView>(R.id.tv_all_articles_report).setText(cantidad.toString())
 
 
         tvSeeAllProducts.setOnClickListener {
