@@ -109,9 +109,9 @@ class HomeFragment : Fragment() {
     fun cargarArticulo(){
 
 
-        DataProvider.listaCategorias.add(Categoria("Electronica", "#0AB5FE"))
+        DataProvider.listaCategorias.add(Categoria("Electrónica", "#0AB5FE"))
         DataProvider.listaCategorias.add(Categoria("Calzado", "#EA4D4F"))
-        DataProvider.listaCategorias.add(Categoria("Jardineria", "#29AF2A"))
+        DataProvider.listaCategorias.add(Categoria("Jardinería", "#29AF2A"))
 
 
         DataProvider.listaArticulos.add(Articulo("Refrigerador", 9, "noup", 500.23f, DataProvider.listaCategorias[0]))

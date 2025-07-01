@@ -47,7 +47,7 @@
                 android:id="@+id/et_search_report"
                 android:layout_width="255dp"
                 android:layout_height="match_parent"
-                android:text="@string/search_report"
+                android:hint="@string/search_report"
                 android:textColor="@color/text_search"
                 android:textStyle="bold"
                 android:layout_marginLeft="10dp"
@@ -140,8 +140,19 @@
 
         </GridView>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/texto_vacio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No se encontraron resultados"
+            android:textSize="18sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="16dp"/>
 
+
+    </LinearLayout>
 
 
 

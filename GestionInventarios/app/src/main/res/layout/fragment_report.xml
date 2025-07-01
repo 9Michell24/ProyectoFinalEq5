@@ -50,11 +50,11 @@
             </EditText>
 
             <ImageView
+                android:id="@+id/iv_search_report"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/ic_search"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/iv_search_report">
+                android:background="@drawable/ic_search">
 
             </ImageView>
 
