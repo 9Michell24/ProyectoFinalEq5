@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +37,18 @@ class ContraseniaActivity1 : AppCompatActivity() {
         val restCorreo: EditText = findViewById(R.id.correoRest)
       //  val codigo: EditText = findViewById(R.id.codigoRest)
         val btnRestContra: Button = findViewById(R.id.btnRestContra)
+        val ivRegresar: ImageView = findViewById(R.id.regresar_restablecer_contra)
+
+
+
+
+        ivRegresar.setOnClickListener{
+            val intento = Intent(this, LoginActivity::class.java)
+            startActivity(intento)
+            finish()
+        }
+
+
 
         btnRestContra.setOnClickListener {
             val correoTexto = restCorreo.text.toString().trim()

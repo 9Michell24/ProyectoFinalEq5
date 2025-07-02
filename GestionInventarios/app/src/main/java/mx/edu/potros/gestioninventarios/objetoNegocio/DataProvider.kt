@@ -6,5 +6,7 @@ object DataProvider {
     var listaCategorias : ArrayList<Categoria> = arrayListOf()
     var listaEntradasSalidas : ArrayList<EntradasSalidas> = arrayListOf()
 
+    public var cargado : Boolean = false
+
 
 }

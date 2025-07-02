@@ -7,7 +7,7 @@
     >
 
     <ImageView
-        android:id="@+id/regresar"
+        android:id="@+id/regresar_restablecer_contra"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginLeft="10dp"

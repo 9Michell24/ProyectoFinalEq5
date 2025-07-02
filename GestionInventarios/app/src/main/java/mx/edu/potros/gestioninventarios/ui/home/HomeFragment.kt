@@ -31,8 +31,6 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
 
 
-    private var cargado : Boolean = false
-
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -75,9 +73,9 @@ class HomeFragment : Fragment() {
         }
 
 
-        if(!cargado) {
+        if(!DataProvider.cargado) {
             cargarArticulo()
-            cargado = true
+            DataProvider.cargado = true
         }
 
 
