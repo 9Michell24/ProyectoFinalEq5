@@ -48,19 +48,19 @@ class MovementFragment : Fragment() {
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioEntradas -> {
-                    radioEntradas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    radioEntradas.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+                    radioEntradas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+                    radioEntradas.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
-                    radioSalidas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary1))
-                    radioSalidas.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    radioSalidas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    radioSalidas.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary1))
                 }
 
                 R.id.radioSalidas -> {
-                    radioSalidas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    radioSalidas.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+                    radioSalidas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary1))
+                    radioSalidas.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
-                    radioEntradas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary1))
-                    radioEntradas.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    radioEntradas.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    radioEntradas.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary1))
                 }
             }
         }
