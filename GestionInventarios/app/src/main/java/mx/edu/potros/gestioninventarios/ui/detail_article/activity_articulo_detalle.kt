@@ -65,7 +65,7 @@ class ActivityArticuloDetalle : Fragment() {
 
         if (imagenUrl.isNotEmpty()) {
             Glide.with(this)
-                .load(imagenUrl)
+                .load(imagenUrl.replace("http://", "https://"))
                 .placeholder(R.drawable.profileicon)
                 .error(R.drawable.profileicon)
                 .into(imageView)

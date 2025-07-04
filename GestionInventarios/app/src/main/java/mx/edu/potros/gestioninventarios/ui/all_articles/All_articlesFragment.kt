@@ -122,7 +122,7 @@ class All_articlesFragment : Fragment() {
             // Cargar imagen con Glide
             if (articulo.imagenUrl.isNotEmpty()) {
                 Glide.with(contexto!!)
-                    .load(articulo.imagenUrl)
+                    .load(articulo.imagenUrl.replace("http://", "https://"))
                     .placeholder(R.drawable.profileicon)
                     .error(R.drawable.profileicon)
                     .into(iv_imagen)
