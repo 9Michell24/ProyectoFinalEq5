@@ -90,6 +90,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_select_category_register_article"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
@@ -105,13 +106,13 @@
             android:layout_marginRight="2dp"
             android:src="@drawable/list_ul" />
 
-        <Spinner
+        <TextView
             android:id="@+id/spinnerCategoríaArtículo"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
+            android:textSize="18dp"
+            android:gravity="center_vertical|start"
             android:hint=" Seleccionar categoría"
-            android:entries="@array/opciones_spinner1"
             android:background="@color/campos_texto"/>
 
 
