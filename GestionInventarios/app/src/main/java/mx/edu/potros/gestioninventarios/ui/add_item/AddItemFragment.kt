@@ -7,50 +7,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentAddItemBinding
+import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 
 class AddItemFragment : Fragment() {
 
     private var _binding: FragmentAddItemBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
-
-
     private val categoriasSeleccionadas = ArrayList<String>()
-
-
-    lateinit var textoCategoria : TextView
-
-
+    private lateinit var textoCategoria: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(AddItemViewModel::class.java)
-
+        ViewModelProvider(this).get(AddItemViewModel::class.java)
         _binding = FragmentAddItemBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -58,42 +41,59 @@ class AddItemFragment : Fragment() {
         _binding = null
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val ivVolver: ImageView = view.findViewById(R.id.regresar)
-        val btnGuardar : Button = view.findViewById(R.id.btnGuardarArt)
-        val seleccionarCatgoria : LinearLayout = view.findViewById(R.id.ll_select_category_register_article)
+        val seleccionarCategoria: LinearLayout = view.findViewById(R.id.ll_select_category_register_article)
         textoCategoria = view.findViewById(R.id.spinnerCategoríaArtículo)
 
-
-
-        seleccionarCatgoria.setOnClickListener{
+        seleccionarCategoria.setOnClickListener {
             mostrarDialogoCategorias()
         }
 
-
-        btnGuardar.setOnClickListener {
-
-            findNavController().navigate(R.id.detailProduct)
-
-        }
         ivVolver.setOnClickListener {
-
-            //popBackStack es para volver al fragment anterior
             findNavController().popBackStack()
-
         }
 
-
-
-
+        binding.btnGuardarArt.setOnClickListener {
+            guardarArticuloEnFirestore()
+        }
     }
 
+    private fun guardarArticuloEnFirestore() {
+        val nombre = binding.nombreArticulo.text.toString().trim()
+        val cantidad = binding.cantidadArticulo.text.toString().toIntOrNull() ?: 0
+        val descripcion = binding.descripciNArticulo.text.toString().trim()
+        val costo = binding.costo.text.toString().toFloatOrNull() ?: 0f
+        val nombreCategoria = textoCategoria.text.toString()
 
+        val categoria = DataProvider.listaCategorias.find { it.nombre == nombreCategoria }
 
+        if (nombre.isBlank() || nombreCategoria.isBlank() || cantidad == 0 || descripcion.isBlank() || costo == 0f || categoria == null) {
+            Toast.makeText(context, "Por favor llena todos los campos obligatorios", Toast.LENGTH_SHORT).show()
+            return
+        }
 
+        val articulo = Articulo(
+            nombre = nombre,
+            cantidad = cantidad,
+            categoria = categoria,
+            descripcion = descripcion,
+            costo = costo
+        )
+
+        val db = Firebase.firestore
+        db.collection("articulos")
+            .add(articulo)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Artículo guardado correctamente", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.detailProduct)
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Error al guardar el artículo", Toast.LENGTH_SHORT).show()
+            }
+    }
 
     private fun mostrarDialogoCategorias() {
         val layout = LinearLayout(requireContext()).apply {
@@ -122,7 +122,6 @@ class AddItemFragment : Fragment() {
 
                 setOnClickListener {
                     vistaSeleccionada?.setBackgroundColor(Color.TRANSPARENT)
-
                     setBackgroundColor(Color.LTGRAY)
                     categoriaSeleccionada = categoria.nombre
                     vistaSeleccionada = this
@@ -139,25 +138,14 @@ class AddItemFragment : Fragment() {
                 categoriaSeleccionada?.let {
                     categoriasSeleccionadas.clear()
                     categoriasSeleccionadas.add(it)
-                    textoCategoria.setText(it)
+                    textoCategoria.text = it
 
-                    for (e in DataProvider.listaCategorias){
-                        if(e.nombre.equals(it)){
-                            textoCategoria.setTextColor(Color.parseColor(e.color))
-                        }
-                    }
-
+                    val categoriaColor = DataProvider.listaCategorias.find { cat -> cat.nombre == it }?.color
+                    textoCategoria.setTextColor(Color.parseColor(categoriaColor ?: "#000000"))
                     textoCategoria.setTypeface(null, Typeface.BOLD)
-
                 }
             }
             .setNegativeButton("Cancelar", null)
             .show()
     }
-
-
-
-
-
-
 }
