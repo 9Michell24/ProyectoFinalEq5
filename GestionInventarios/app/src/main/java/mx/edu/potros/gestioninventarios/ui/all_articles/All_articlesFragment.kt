@@ -77,6 +77,22 @@ class All_articlesFragment : Fragment() {
         }
 
 
+        var nombre = "Calzado"
+        var indice = 0
+
+        for ((i, e) in DataProvider.listaCategorias.withIndex()) {
+            // i = índice
+            // e = elemento
+            if(e.nombre.equals(nombre)){
+                indice = i
+            }
+
+        }
+
+
+
+
+
         ivSearchReport.setOnClickListener{
             buscar()
         }

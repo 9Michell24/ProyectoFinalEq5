@@ -72,5 +72,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
 
 
+    implementation ("com.github.yukuku:ambilwarna:2.0.1")
+
 
 }
