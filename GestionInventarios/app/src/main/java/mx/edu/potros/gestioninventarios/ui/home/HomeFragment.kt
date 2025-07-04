@@ -133,54 +133,52 @@ class HomeFragment : Fragment() {
         DataProvider.listaCategorias.add(Categoria("Papelería", "#FFC107"))
         DataProvider.listaCategorias.add(Categoria("Deportes", "#9C27B0"))
 
-        // Artículos base
-        DataProvider.listaArticulos.add(Articulo("Refrigerador", 9, "Refrigerador de dos puertas con sistema No-Frost", 500.23f, DataProvider.listaCategorias[0]))
+// Artículos base
+        DataProvider.listaArticulos.add(Articulo("Refrigerador", 9, "Refrigerador de dos puertas con sistema No-Frost", 500.23f, DataProvider.listaCategorias[0], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[0], 9, "24/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Vans", 20, "Tenis Vans clásicos modelo Old Skool", 300.23f, DataProvider.listaCategorias[1]))
+        DataProvider.listaArticulos.add(Articulo("Vans", 20, "Tenis Vans clásicos modelo Old Skool", 300.23f, DataProvider.listaCategorias[1], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[1], 20, "24/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Vans2", 1, "Versión limitada Vans con diseño exclusivo", 300.23f, DataProvider.listaCategorias[1]))
+        DataProvider.listaArticulos.add(Articulo("Vans2", 1, "Versión limitada Vans con diseño exclusivo", 300.23f, DataProvider.listaCategorias[1], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[2], 1, "24/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Pala", 20, "Pala de acero para jardinería pesada", 50f, DataProvider.listaCategorias[2]))
+        DataProvider.listaArticulos.add(Articulo("Pala", 20, "Pala de acero para jardinería pesada", 50f, DataProvider.listaCategorias[2], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[3], 20, "24/06/2025", "Nuevo artículo", true))
 
-        // Nuevos artículos (10)
-        DataProvider.listaArticulos.add(Articulo("Cuaderno profesional", 100, "Cuaderno de 100 hojas rayadas", 25.5f, DataProvider.listaCategorias[3]))
+// Nuevos artículos (10)
+        DataProvider.listaArticulos.add(Articulo("Cuaderno profesional", 100, "Cuaderno de 100 hojas rayadas", 25.5f, DataProvider.listaCategorias[3], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[4], 100, "25/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Balón de fútbol", 15, "Balón oficial tamaño 5", 320.0f, DataProvider.listaCategorias[4]))
+        DataProvider.listaArticulos.add(Articulo("Balón de fútbol", 15, "Balón oficial tamaño 5", 320.0f, DataProvider.listaCategorias[4], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[5], 15, "25/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Laptop Lenovo", 5, "Laptop con procesador i5 y 8GB RAM", 12000f, DataProvider.listaCategorias[0]))
+        DataProvider.listaArticulos.add(Articulo("Laptop Lenovo", 5, "Laptop con procesador i5 y 8GB RAM", 12000f, DataProvider.listaCategorias[0], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[6], 5, "26/06/2025", "Reposición", true))
 
-        DataProvider.listaArticulos.add(Articulo("Sandalias", 30, "Sandalias de descanso para verano", 120.0f, DataProvider.listaCategorias[1]))
+        DataProvider.listaArticulos.add(Articulo("Sandalias", 30, "Sandalias de descanso para verano", 120.0f, DataProvider.listaCategorias[1], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[7], 30, "26/06/2025", "Nuevo artículo", true))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[7], 10, "28/06/2025", "Venta parcial", false))
 
-        DataProvider.listaArticulos.add(Articulo("Tijeras escolares", 50, "Tijeras punta redonda para niños", 15.0f, DataProvider.listaCategorias[3]))
+        DataProvider.listaArticulos.add(Articulo("Tijeras escolares", 50, "Tijeras punta redonda para niños", 15.0f, DataProvider.listaCategorias[3], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[8], 50, "26/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Pesas 5kg", 10, "Par de pesas de goma de 5kg", 700.0f, DataProvider.listaCategorias[4]))
+        DataProvider.listaArticulos.add(Articulo("Pesas 5kg", 10, "Par de pesas de goma de 5kg", 700.0f, DataProvider.listaCategorias[4], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[9], 10, "26/06/2025", "Nuevo artículo", true))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[9], 4, "28/06/2025", "Salida por venta", false))
 
-        DataProvider.listaArticulos.add(Articulo("Tablet Samsung", 7, "Tablet de 10.4 pulgadas, 64GB", 5200.0f, DataProvider.listaCategorias[0]))
+        DataProvider.listaArticulos.add(Articulo("Tablet Samsung", 7, "Tablet de 10.4 pulgadas, 64GB", 5200.0f, DataProvider.listaCategorias[0], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[10], 7, "27/06/2025", "Adición de inventario", true))
 
-        DataProvider.listaArticulos.add(Articulo("Botas montaña", 12, "Botas resistentes para senderismo", 860.0f, DataProvider.listaCategorias[1]))
+        DataProvider.listaArticulos.add(Articulo("Botas montaña", 12, "Botas resistentes para senderismo", 860.0f, DataProvider.listaCategorias[1], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[11], 12, "27/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Regadera", 18, "Regadera manual de 2 litros para jardín", 80.0f, DataProvider.listaCategorias[2]))
+        DataProvider.listaArticulos.add(Articulo("Regadera", 18, "Regadera manual de 2 litros para jardín", 80.0f, DataProvider.listaCategorias[2], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[12], 18, "27/06/2025", "Nuevo artículo", true))
 
-        DataProvider.listaArticulos.add(Articulo("Lapiceros negros", 200, "Paquete de 12 lapiceros tinta negra", 50.0f, DataProvider.listaCategorias[3]))
+        DataProvider.listaArticulos.add(Articulo("Lapiceros negros", 200, "Paquete de 12 lapiceros tinta negra", 50.0f, DataProvider.listaCategorias[3], ""))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[13], 200, "28/06/2025", "Nuevo artículo", true))
         DataProvider.listaEntradasSalidas.add(EntradasSalidas(DataProvider.listaArticulos[13], 40, "30/06/2025", "Consumo interno", false))
-
-
 
 
     }

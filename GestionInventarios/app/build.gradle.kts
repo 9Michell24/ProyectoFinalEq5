@@ -75,4 +75,7 @@ dependencies {
     implementation ("com.github.yukuku:ambilwarna:2.0.1")
 
 
+    implementation("com.cloudinary:cloudinary-android:2.3.1")
+
+
 }
