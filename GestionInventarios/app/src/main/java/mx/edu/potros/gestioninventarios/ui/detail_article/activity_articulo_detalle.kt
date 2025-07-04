@@ -1,32 +1,15 @@
 package mx.edu.potros.gestioninventarios.ui.detail_article
 
 import android.graphics.Color
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import mx.edu.potros.gestioninventarios.R
-import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 
-class activity_articulo_detalle : Fragment() {
-
-    companion object {
-        fun newInstance() = activity_articulo_detalle()
-    }
-
-    private val viewModel: ActivityArticuloDetalleViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // TODO: Use the ViewModel
-    }
+class ActivityArticuloDetalle : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,52 +18,59 @@ class activity_articulo_detalle : Fragment() {
         return inflater.inflate(R.layout.fragment_activity_articulo_detalle, container, false)
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val ivVolver: ImageView = view.findViewById(R.id.regresar)
+        val btnEntSal: Button = view.findViewById(R.id.btnEntSal)
+        val btnEditarArt: Button = view.findViewById(R.id.btnEditarArt)
 
-        val btnEntSal : Button = view.findViewById(R.id.btnEntSal)
-        btnEntSal.setOnClickListener {
-
-            findNavController().navigate(R.id.navigation_movement)
-
-        }
+        val name: TextView = view.findViewById(R.id.detail_product_name)
+        val category: TextView = view.findViewById(R.id.detail_product_category)
+        val stock: TextView = view.findViewById(R.id.detail_product_stock)
+        val description: TextView = view.findViewById(R.id.detail_product_description)
+        val imageView: ImageView = view.findViewById(R.id.detail_product_image)
 
         ivVolver.setOnClickListener {
-
-            //popBackStack es para volver al fragment anterior
             findNavController().popBackStack()
-
         }
 
-
-
-        val nombre = arguments?.getString("nombre")
-        val categoria = arguments?.getString("categoria")
-        val cantidad = arguments?.getInt("cantidad")
-        val position = arguments?.getInt("position")
-        val descripcion = arguments?.getString("descripcion")
-
-        val name : TextView = view.findViewById(R.id.detail_product_name)
-        val category : TextView = view.findViewById(R.id.detail_product_category)
-        val stock : TextView = view.findViewById(R.id.detail_product_stock)
-        val description : TextView = view.findViewById(R.id.detail_product_description)
-
-
-        if(position != null) {
-            category.setTextColor(Color.parseColor(DataProvider.listaArticulos[position].categoria.color))
+        btnEntSal.setOnClickListener {
+            findNavController().navigate(R.id.navigation_movement)
         }
 
-        name.setText(nombre)
-        category.setText(categoria)
-        stock.setText("Cantidad en stock: " + cantidad.toString())
-        description.setText(descripcion)
+        btnEditarArt.setOnClickListener {
+            // Aquí podrías abrir la pantalla de edición si la tienes implementada
+            Toast.makeText(requireContext(), "Editar artículo no implementado", Toast.LENGTH_SHORT).show()
+        }
 
+        // Recibir los argumentos del bundle
+        val nombre = arguments?.getString("nombre") ?: "(sin nombre)"
+        val categoriaNombre = arguments?.getString("categoria") ?: "(sin categoría)"
+        val cantidad = arguments?.getInt("cantidad") ?: 0
+        val descripcion = arguments?.getString("descripcion") ?: "(sin descripción)"
+        val colorCategoria = arguments?.getString("color") ?: "#000000"
+        val imagenUrl = arguments?.getString("imagenUrl") ?: ""
 
+        name.text = nombre
+        category.text = categoriaNombre
+        stock.text = "Cantidad en stock: $cantidad"
+        description.text = descripcion
+
+        try {
+            category.setTextColor(Color.parseColor(colorCategoria))
+        } catch (e: Exception) {
+            category.setTextColor(Color.BLACK)
+        }
+
+        if (imagenUrl.isNotEmpty()) {
+            Glide.with(this)
+                .load(imagenUrl)
+                .placeholder(R.drawable.profileicon)
+                .error(R.drawable.profileicon)
+                .into(imageView)
+        } else {
+            imageView.setImageResource(R.drawable.profileicon)
+        }
     }
-
-
 }

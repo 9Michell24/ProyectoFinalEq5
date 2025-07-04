@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.detail_article.activity_articulo_detalle">
+    tools:context=".ui.detail_article.ActivityArticuloDetalle">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,105 +21,106 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:text="Detalle artículo"
             android:textColor="@color/black"
-            android:layout_gravity="center"
             android:textSize="25dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/detail_product_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:textColor="@color/calzado"
             android:gravity="center"
-            android:text="Calzado"/>
+            android:text="Categoría"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/detail_product_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="Nombre"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:textSize="30dp"
-            android:text="Vans"
-            android:id="@+id/detail_product_name"
-            android:gravity="center"/>
+            android:textStyle="bold" />
 
         <ImageView
-            android:layout_marginTop="20dp"
+            android:id="@+id/detail_product_image"
             android:layout_width="200dp"
             android:layout_height="120dp"
-            android:src="@drawable/vans"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/profileicon" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Descripción:"
+            android:textColor="@color/black"
             android:textSize="20dp"
-            android:textColor="@color/calzado"
-            android:gravity="center"
-            android:text="Descripción:"/>
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/detail_product_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:textStyle="bold"
             android:layout_marginHorizontal="20dp"
-            android:textSize="17dp"
-            android:textColor="@color/black"
+            android:layout_marginTop="15dp"
             android:gravity="center"
-            android:id="@+id/detail_product_description"
-            android:text="Clásicos, cómodos y con estilo. Estos tenis Vans son el complemento perfecto para cualquier outfit urbano."/>
+            android:text="Descripción del artículo"
+            android:textColor="@color/black"
+            android:textSize="17dp"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/detail_product_stock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="30dp"
             android:gravity="center"
-            android:id="@+id/detail_product_stock"
-            android:text="Cantidad en stock: 17"/>
+            android:text="Cantidad en stock: 0"
+            android:textColor="@color/black"
+            android:textSize="30dp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnEditarArt"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/primary1"
                 android:text="@string/editar"
-                android:textColor="@color/white"
-                android:layout_gravity="center"/>
+                android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/btnEntSal"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="@color/primary1"
                 android:text="@string/entradas_salidas"
-                android:textColor="@color/white"
-                android:layout_gravity="center"/>
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
