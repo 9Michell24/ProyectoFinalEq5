@@ -3,135 +3,99 @@ package mx.edu.potros.gestioninventarios.ui.all_articles
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
+import android.view.*
+import android.widget.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.GridView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.google.firebase.firestore.FirebaseFirestore
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
+import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
-import mx.edu.potros.gestioninventarios.ui.home.HomeViewModel
 
 class All_articlesFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = All_articlesFragment()
-    }
-
     private val viewModel: AllArticlesViewModel by viewModels()
 
-
     private var adaptador: AdaptadorListAllArticles? = null
-    private lateinit var homeViewModel: HomeViewModel
-
     private val categoriasSeleccionadas = ArrayList<String>()
-
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // TODO: Use the ViewModel
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
-
-
         return inflater.inflate(R.layout.fragment_all_articles, container, false)
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val ivVolver: ImageView = view.findViewById(R.id.iv_back_all_articles)
+        val tvAgregarArticulo: TextView = view.findViewById(R.id.agregarArticulo)
+        val ivAgregarArticulo: ImageView = view.findViewById(R.id.iv_add_article)
+        val ivSearchReport: ImageView = view.findViewById(R.id.iv_search_report)
+        val ivFilter: ImageView = view.findViewById(R.id.iv_filter_all_articles)
+        val gridView: GridView = view.findViewById(R.id.list_all_articles)
 
-        val tvAgregarArticulo : TextView = view.findViewById(R.id.agregarArticulo)
-        val ivAgregarArticulo : ImageView = view.findViewById(R.id.iv_add_article)
-        val ivSearchReport : ImageView = view.findViewById(R.id.iv_search_report)
-
-
-        val ivFilter : ImageView = view.findViewById(R.id.iv_filter_all_articles)
-
-
-        ivFilter.setOnClickListener{
-            mostrarDialogoCategorias()
-        }
-
-
-        var nombre = "Calzado"
-        var indice = 0
-
-        for ((i, e) in DataProvider.listaCategorias.withIndex()) {
-            // i = índice
-            // e = elemento
-            if(e.nombre.equals(nombre)){
-                indice = i
-            }
-
-        }
-
-
-
-
-
-        ivSearchReport.setOnClickListener{
-            buscar()
-        }
-
-
-
-
-        tvAgregarArticulo.setOnClickListener {
-
-            findNavController().navigate(R.id.newArticulo)
-        }
-
-        ivAgregarArticulo.setOnClickListener {
-
-            findNavController().navigate(R.id.newArticulo)
-        }
-
-
-        ivVolver.setOnClickListener {
-
-            //popBackStack es para volver al fragment anterior
-            findNavController().popBackStack()
-
-        }
-
-
-        adaptador = AdaptadorListAllArticles(view.context, ArrayList(DataProvider.listaArticulos))
-
-        val gridView : GridView = view.findViewById(R.id.list_all_articles)
-
+        adaptador = AdaptadorListAllArticles(view.context, ArrayList())
         gridView.adapter = adaptador
 
+        ivVolver.setOnClickListener { findNavController().popBackStack() }
+        tvAgregarArticulo.setOnClickListener { findNavController().navigate(R.id.newArticulo) }
+        ivAgregarArticulo.setOnClickListener { findNavController().navigate(R.id.newArticulo) }
+        ivSearchReport.setOnClickListener { buscar() }
+        ivFilter.setOnClickListener { mostrarDialogoCategorias() }
 
-
-
-
+        cargarArticulosDesdeFirestore()
     }
 
+    private fun cargarArticulosDesdeFirestore() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("articulos").get()
+            .addOnSuccessListener { result ->
+                val lista = ArrayList<Articulo>()
+                val categoriasUnicas = mutableSetOf<String>()
 
+                for (document in result) {
+                    val categoriaNombre = document.get("categoria.nombre") as? String ?: ""
+                    val categoriaColor = document.get("categoria.color") as? String ?: "#000000"
+
+                    categoriasUnicas.add(categoriaNombre)
+
+                    val articulo = Articulo(
+                        nombre = document.getString("nombre") ?: "",
+                        cantidad = document.getLong("cantidad")?.toInt() ?: 0,
+                        descripcion = document.getString("descripcion") ?: "",
+                        costo = document.getDouble("costo")?.toFloat() ?: 0f,
+                        categoria = Categoria(
+                            nombre = categoriaNombre,
+                            color = categoriaColor
+                        ),
+                        imagenUrl = document.getString("imagenUrl") ?: "" // opcional
+                    )
+                    lista.add(articulo)
+                }
+
+                DataProvider.listaArticulos = lista
+                DataProvider.listaCategorias = categoriasUnicas.map { Categoria(it, "#000000") }
+                    .toCollection(ArrayList())
+
+                adaptador?.actualizarLista(lista)
+
+                if (lista.isEmpty()) {
+                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.VISIBLE
+                } else {
+                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error al cargar artículos", Toast.LENGTH_SHORT).show()
+            }
+    }
 
     private fun mostrarDialogoCategorias() {
         val checkboxes = DataProvider.listaCategorias.map { categoria ->
@@ -157,156 +121,82 @@ class All_articlesFragment : Fragment() {
                 )
                 buscar()
             }
-
             .setNegativeButton("Cancelar", null)
             .show()
     }
 
+    private fun buscar() {
+        val texto = view?.findViewById<EditText>(R.id.et_search_report)?.text.toString()
+        val nuevaLista = ArrayList<Articulo>()
 
-
-
-    private fun buscar(){
-
-        var nuevaLista = ArrayList<Articulo>()
-        var nuevaListaConFiltro = ArrayList<Articulo>()
-        var texto = view?.findViewById<EditText>(R.id.et_search_report)
-
-
-        nuevaLista.clear()
-        nuevaListaConFiltro.clear()
-
-        if(!categoriasSeleccionadas.isEmpty()){
-         for(e in DataProvider.listaArticulos){
-             if(categoriasSeleccionadas.contains(e.categoria.nombre)){
-                 nuevaListaConFiltro.add(e)
-             }
-         }
-
-            if (texto?.text.toString().equals("")) {
-                view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
-                adaptador?.actualizarLista(ArrayList(nuevaListaConFiltro))
-                Log.d("size", categoriasSeleccionadas.size.toString())
-            } else {
-
-                for (e in nuevaListaConFiltro) {
-                    if (e.nombre.contains(texto?.text.toString(), ignoreCase = true)) {
-                        nuevaLista.add(e)
-                    }
-
-                }
-
-                if (nuevaLista.isEmpty()) {
-                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.VISIBLE
-                } else {
-                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
-                }
-
-                adaptador?.actualizarLista(nuevaLista)
-
+        val base = if (categoriasSeleccionadas.isEmpty()) {
+            DataProvider.listaArticulos
+        } else {
+            DataProvider.listaArticulos.filter {
+                categoriasSeleccionadas.contains(it.categoria.nombre)
             }
         }
 
-        else {
-            if (texto?.text.toString().equals("")) {
-                view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
-                adaptador?.actualizarLista(ArrayList(DataProvider.listaArticulos))
-                Log.d("size", categoriasSeleccionadas.size.toString())
-            } else {
-
-                for (e in DataProvider.listaArticulos) {
-                    if (e.nombre.contains(texto?.text.toString(), ignoreCase = true)) {
-                        nuevaLista.add(e)
-                    }
-
-                }
-
-                if (nuevaLista.isEmpty()) {
-                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.VISIBLE
-                } else {
-                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
-                }
-
-                adaptador?.actualizarLista(nuevaLista)
-            }
+        if (texto.isBlank()) {
+            nuevaLista.addAll(base)
+        } else {
+            nuevaLista.addAll(
+                base.filter { it.nombre.contains(texto, ignoreCase = true) }
+            )
         }
+
+        if (nuevaLista.isEmpty()) {
+            view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.VISIBLE
+        } else {
+            view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
+        }
+
+        adaptador?.actualizarLista(ArrayList(nuevaLista))
     }
 
+    private class AdaptadorListAllArticles(
+        private val contexto: Context,
+        private var articulos: ArrayList<Articulo>
+    ) : BaseAdapter() {
 
-    private class AdaptadorListAllArticles : BaseAdapter {
+        override fun getCount(): Int = articulos.size
 
-        var articulos = ArrayList<Articulo>()
-        var contexto: Context? = null
+        override fun getItem(position: Int): Any = articulos[position]
 
-        constructor(contexto: Context, articulos : ArrayList<Articulo>){
-            this.contexto = contexto
-            this.articulos = articulos
-
-        }
-
-        override fun getCount(): Int {
-            return articulos.size
-        }
-
-        override fun getItem(position: Int): Any {
-            return articulos[position]
-        }
-
-        override fun getItemId(position: Int): Long {
-            return position.toLong()
-        }
+        override fun getItemId(position: Int): Long = position.toLong()
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            var articulo = articulos[position]
-            var inflador = LayoutInflater.from(contexto)
-            var vista = inflador.inflate(R.layout.design_articles_list, null)
+            val articulo = articulos[position]
+            val inflador = LayoutInflater.from(contexto)
+            val vista = inflador.inflate(R.layout.design_articles_list, null)
 
+            val tvTitle: TextView = vista.findViewById(R.id.title_article_list_all_articles)
+            val tvNumber: TextView = vista.findViewById(R.id.number_list_all_articles)
+            val tvCategory: TextView = vista.findViewById(R.id.title_category_list_all_articles)
+            val ivImagen: ImageView = vista.findViewById(R.id.imagen_list_all_articles)
 
-                var tv_title: TextView = vista.findViewById(R.id.title_article_list_all_articles)
-                var tv_number: TextView = vista.findViewById(R.id.number_list_all_articles)
-                var tv_category: TextView =
-                    vista.findViewById(R.id.title_category_list_all_articles)
-                var iv_imagen: ImageView = vista.findViewById(R.id.imagen_list_all_articles)
+            tvTitle.text = articulo.nombre
+            tvNumber.text = articulo.cantidad.toString()
+            tvCategory.text = articulo.categoria.nombre
+            tvCategory.setTextColor(Color.parseColor(articulo.categoria.color))
 
+            Glide.with(contexto)
+                .load(articulo.imagenUrl)
+                .placeholder(R.drawable.profileicon)
+                .into(ivImagen)
 
-                var contador: Int = 0
-
-                for (e in DataProvider.listaEntradasSalidas) {
-                    if (e.articulo.nombre.equals(articulo.nombre)) {
-                        if (e.isEntrada) {
-                            contador = contador + e.cantidad
-                        } else {
-                            contador = contador - e.cantidad
-                        }
-
-                    }
+            vista.setOnClickListener { view ->
+                val bundle = Bundle().apply {
+                    putString("nombre", articulo.nombre)
+                    putString("categoria", articulo.categoria.nombre)
+                    putInt("cantidad", articulo.cantidad)
+                    putString("descripcion", articulo.descripcion)
+                    putInt("position", position)
                 }
-
-
-
-                tv_category.setTextColor(Color.parseColor(articulo.categoria.color))
-
-                tv_title.setText(articulo.nombre)
-                tv_number.setText(contador.toString())
-                tv_category.setText(articulo.categoria.nombre)
-                //  iv_imagen.setImageResource(R.drawable.profileicon)
-
-                vista.setOnClickListener {
-                    val bundle = Bundle().apply {
-                        putString("nombre", articulo.nombre)
-                        putString("categoria", articulo.categoria.nombre)
-                        putInt("cantidad", contador)
-                        putString("descripcion", articulo.descripcion)
-                        putInt("position", position)
-                    }
-
-                    Navigation.findNavController(vista).navigate(R.id.detailProduct, bundle)
-                }
-
-
+                Navigation.findNavController(view).navigate(R.id.detailProduct, bundle)
+            }
 
             return vista
-
-
         }
 
         fun actualizarLista(nuevaLista: ArrayList<Articulo>) {
@@ -314,8 +204,5 @@ class All_articlesFragment : Fragment() {
             articulos.addAll(nuevaLista)
             notifyDataSetChanged()
         }
-
     }
-
-
 }

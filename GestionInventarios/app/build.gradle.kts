@@ -77,5 +77,5 @@ dependencies {
 
     implementation("com.cloudinary:cloudinary-android:2.3.1")
 
-
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }

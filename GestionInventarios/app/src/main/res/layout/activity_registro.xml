@@ -59,7 +59,7 @@
             android:layout_marginLeft="5dp"
             android:hint="Nombre"
             android:inputType="text"
-            android:maxLength="10"
+            android:maxLength="40"
             android:background="@color/campos_texto"/>
 
     </LinearLayout>
@@ -85,7 +85,7 @@
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:inputType="textEmailAddress"
-            android:maxLength="30"
+            android:maxLength="40"
             android:hint="Correo"
             android:background="@color/campos_texto"/>
 
@@ -111,7 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:hint="Selecciona una fecha"
+            android:hint="Fecha de nacimiento"
             android:focusable="false"
             android:background="@color/campos_texto"/>
 

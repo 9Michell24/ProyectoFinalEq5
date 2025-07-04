@@ -8,5 +8,8 @@ object DataProvider {
 
     public var cargado : Boolean = false
 
-
+    fun obtenerCategoriaPorNombre(nombre: String): Categoria {
+        return listaCategorias.find { it.nombre == nombre }
+            ?: Categoria(nombre, "#000000") // por si no la encuentra, crea una por defecto
+    }
 }
