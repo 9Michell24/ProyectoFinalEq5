@@ -1,23 +1,32 @@
 package mx.edu.potros.gestioninventarios.ui.add_item
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.cloudinary.Cloudinary
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.utils.ObjectUtils
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -27,6 +36,8 @@ import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 import yuku.ambilwarna.AmbilWarnaDialog
+import java.io.File
+import java.io.FileOutputStream
 import kotlin.concurrent.thread
 
 class AddItemFragment : Fragment() {
@@ -40,10 +51,23 @@ class AddItemFragment : Fragment() {
     private val PICK_IMAGE_REQUEST = 1
     private var imagenSeleccionadaUri: Uri? = null
 
-    private val cloudinary = Cloudinary(ObjectUtils.asMap(
-        "cloud_name", "de7nyni5e",
-        "upload_preset", "articulo-upload"
-    ))
+//    private val cloudinary = Cloudinary(ObjectUtils.asMap(
+//        "cloud_name", "de7nyni5e",
+//        "api_key", "839685883949533",
+//        "upload_preset", "articulo-upload"
+//    ))
+
+
+    val CLOUD_NAME = "de7nyni5e"
+    val UPLOAD_PRESET = "articulo-upload"
+
+    var imageUri: Uri? = null
+
+
+
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +87,10 @@ class AddItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        initCloudinary()
+
+
         textoCategoria = view.findViewById(R.id.spinnerCategoríaArtículo)
 
         view.findViewById<ImageView>(R.id.regresar).setOnClickListener {
@@ -81,17 +109,184 @@ class AddItemFragment : Fragment() {
         }
 
         binding.btnGuardarArt.setOnClickListener {
-            subirImagenYGuardarArticulo()
+           // subirImagenYGuardarArticulo()
+
+
+
+            if (imagenSeleccionadaUri != null) {
+                uploadImagenDesdeUri(requireContext(), imagenSeleccionadaUri!!) { url ->
+                    if (url != null) {
+                        guardarArticuloEnFirestore(url)
+                    } else {
+                        Log.e("Upload", "Falló la subida de imagen")
+                    }
+                }
+            } else {
+                Toast.makeText(requireContext(), "Selecciona una imagen primero", Toast.LENGTH_SHORT).show()
+            }
+
+
+
+
+
+
+            //Esto es para probar una imagen por defecto
+//            crearImagenTemporalDesdeDrawable(requireContext(), R.drawable.grafica)
+//
+//            uploadImagen(requireContext()) { url ->
+//                if (url != null) {
+//                    guardarArticuloEnFirestore(url)
+//                } else {
+//                    Log.e("Upload", "Falló la subida de imagen")
+//                }
+//            }
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+    private fun initCloudinary(){
+        val config: MutableMap<String, String> = HashMap<String, String>()
+        config["cloud_name"] = CLOUD_NAME
+
+        MediaManager.init(requireContext(), config)
+
+
+    }
+
+
+
+
+
+    fun uploadImagenDesdeUri(context: Context, uri: Uri, callback: (String?) -> Unit) {
+        try {
+            // Copiar el contenido del URI a un archivo temporal
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val archivoTemp = File(context.cacheDir, "imagen_subida_desde_galeria.jpg")
+            val outputStream = FileOutputStream(archivoTemp)
+
+            inputStream?.copyTo(outputStream)
+            inputStream?.close()
+            outputStream.flush()
+            outputStream.close()
+
+            // Subir el archivo temporal
+            MediaManager.get().upload(archivoTemp.absolutePath)
+                .unsigned(UPLOAD_PRESET)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String?) {
+                        Log.d("Upload", "Iniciando subida desde galería...")
+                    }
+
+                    override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                        Log.d("Upload", "Progreso: $bytes/$totalBytes")
+                    }
+
+                    override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
+                        val url = resultData?.get("url") as? String
+                        Log.d("Upload", "Subida exitosa: $url")
+                        callback(url)
+                    }
+
+                    override fun onError(requestId: String?, error: ErrorInfo?) {
+                        Log.e("Upload Error", "Error: ${error?.description}")
+                        callback(null)
+                    }
+
+                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                        Log.e("Upload Reintento", error?.description ?: "Sin detalles")
+                    }
+                }).dispatch()
+
+        } catch (e: Exception) {
+            Log.e("Upload", "Excepción al subir imagen desde Uri: ${e.message}")
+            callback(null)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == AppCompatActivity.RESULT_OK && data?.data != null) {
-            imagenSeleccionadaUri = data.data
-            binding.profileIcon.setImageURI(imagenSeleccionadaUri)
+
+
+
+
+    fun uploadImagen(context: Context, callback: (String?) -> Unit) {
+        // Usa directamente el archivo, no el Uri
+        val archivoTemp = File(context.cacheDir, "imagen_prueba.png")
+
+        if (archivoTemp.exists()) {
+            MediaManager.get().upload(archivoTemp.absolutePath)
+                .unsigned(UPLOAD_PRESET)
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String?) {
+                        Log.d("Upload", "Iniciando subida...")
+                    }
+
+                    override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                        Log.d("Upload", "Progreso: $bytes/$totalBytes")
+                    }
+
+                    override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
+                        val url = resultData?.get("url") as? String
+                        Log.d("Upload", "Subida exitosa: $url")
+                        callback(url)
+                    }
+
+                    override fun onError(requestId: String?, error: ErrorInfo?) {
+                        Log.e("Upload Error", "Error: ${error?.description}")
+                        callback(null)
+                    }
+
+                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                        Log.e("Upload Reintento", error?.description ?: "Sin detalles")
+                    }
+                }).dispatch()
+        } else {
+            Log.e("Upload", "Archivo no existe")
+            callback(null)
         }
     }
+
+
+
+
+
+    fun crearImagenTemporalDesdeDrawable(context: Context, drawableId: Int) {
+        val drawable = ContextCompat.getDrawable(context, drawableId) ?: throw Exception("Drawable no encontrado")
+        val bitmap = (drawable as BitmapDrawable).bitmap
+
+        val archivoTemp = File(context.cacheDir, "imagen_prueba.png")
+        val outputStream = FileOutputStream(archivoTemp)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        outputStream.flush()
+        outputStream.close()
+    }
+
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == AppCompatActivity.RESULT_OK && data?.data != null) {
+            imagenSeleccionadaUri = data.data // 👈 Guardas el Uri
+            binding.profileIcon.setImageURI(imagenSeleccionadaUri) // Muestras en ImageView
+        }
+    }
+
 
     private fun subirImagenYGuardarArticulo() {
         if (imagenSeleccionadaUri == null) {
@@ -99,26 +294,31 @@ class AddItemFragment : Fragment() {
             return
         }
 
-        val inputStream = requireContext().contentResolver.openInputStream(imagenSeleccionadaUri!!)
-        val bytes = inputStream!!.readBytes()
+        MediaManager.get().upload(imagenSeleccionadaUri)
+            .option("upload_preset", "articulo-upload")
+            .callback(object : UploadCallback {
+                override fun onStart(requestId: String?) {}
+                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
 
-        thread {
-            try {
-                val result = cloudinary.uploader().upload(bytes, ObjectUtils.asMap(
-                    "upload_preset", "articulo-upload"
-                ))
-                val url = result["secure_url"] as String
-                requireActivity().runOnUiThread {
-                    guardarArticuloEnFirestore(url)
+                override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
+                    val url = resultData["secure_url"] as? String
+                    if (url != null) {
+                        guardarArticuloEnFirestore(url)
+                    } else {
+                        Toast.makeText(context, "Error: URL no obtenida", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                requireActivity().runOnUiThread {
-                    Toast.makeText(context, "Error al subir imagen", Toast.LENGTH_SHORT).show()
+
+                override fun onError(requestId: String?, error: ErrorInfo?) {
+                    Toast.makeText(context, "Error al subir imagen :c", Toast.LENGTH_SHORT).show()
+                    Log.e("Cloudinary", "Error: ${error?.description}")
                 }
-            }
-        }
+
+                override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+            })
+            .dispatch()
     }
+
 
     private fun guardarArticuloEnFirestore(imagenUrl: String) {
         val nombre = binding.nombreArticulo.text.toString().trim()
