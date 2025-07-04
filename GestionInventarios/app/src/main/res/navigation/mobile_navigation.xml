@@ -43,7 +43,7 @@
 
     <fragment
         android:id="@+id/detailProduct"
-        android:name="mx.edu.potros.gestioninventarios.ui.detail_article.activity_articulo_detalle"
+        android:name="mx.edu.potros.gestioninventarios.ui.detail_article.ActivityArticuloDetalle"
         android:label="DetalleProducto"
         tools:layout="@layout/fragment_activity_articulo_detalle" />
 
@@ -59,7 +59,7 @@
         android:id="@+id/newArticulo"
         android:name="mx.edu.potros.gestioninventarios.ui.add_item.AddItemFragment"
         android:label="Agregar Articulo"
-        tools:layout="@layout/activity_registro_articulo" />
+        tools:layout="@layout/fragment_add_item" />
 
     <fragment
         android:id="@+id/configFragment"

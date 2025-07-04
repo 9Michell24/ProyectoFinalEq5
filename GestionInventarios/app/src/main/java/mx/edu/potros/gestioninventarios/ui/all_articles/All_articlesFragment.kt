@@ -79,37 +79,58 @@ class All_articlesFragment : Fragment() {
     }
 
 
-    private class AdaptadorListAllArticles(
-        private val contexto: Context,
-        private val articulos: List<Articulo>
-    ) : BaseAdapter() {
+    private class AdaptadorListAllArticles : BaseAdapter {
 
-        override fun getCount(): Int = articulos.size
+        var articulos = ArrayList<Articulo>()
+        var contexto: Context? = null
 
-        override fun getItem(position: Int): Any = articulos[position]
+        constructor(contexto: Context, articulos: ArrayList<Articulo>) {
+            this.contexto = contexto
+            this.articulos = articulos
+        }
 
-        override fun getItemId(position: Int): Long = position.toLong()
+        override fun getCount(): Int {
+            return articulos.size
+        }
+
+        override fun getItem(position: Int): Any {
+            return articulos[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val articulo = articulos[position]
             val inflador = LayoutInflater.from(contexto)
             val vista = inflador.inflate(R.layout.design_articles_list, null)
 
-            val tvTitle: TextView = vista.findViewById(R.id.title_article_list_all_articles)
-            val tvNumber: TextView = vista.findViewById(R.id.number_list_all_articles)
-            val tvCategory: TextView = vista.findViewById(R.id.title_category_list_all_articles)
-            val ivImagen: ImageView = vista.findViewById(R.id.imagen_list_all_articles)
+            val tv_title: TextView = vista.findViewById(R.id.title_article_list_all_articles)
+            val tv_number: TextView = vista.findViewById(R.id.number_list_all_articles)
+            val tv_category: TextView = vista.findViewById(R.id.title_category_list_all_articles)
+            val iv_imagen: ImageView = vista.findViewById(R.id.imagen_list_all_articles)
 
-            tvCategory.setTextColor(Color.parseColor(articulo.categoria.color))
-            tvTitle.text = articulo.nombre
-            tvNumber.text = articulo.cantidad.toString()
-            tvCategory.text = articulo.categoria.nombre
+            val contador = articulo.cantidad
 
-            Glide.with(vista)
-                .load(articulo.imagenUrl)
-                .placeholder(R.drawable.profileicon)
-                .into(ivImagen)
+            // Setear textos
+            tv_category.setTextColor(Color.parseColor(articulo.categoria.color))
+            tv_title.text = articulo.nombre
+            tv_number.text = contador.toString()
+            tv_category.text = articulo.categoria.nombre
 
+            // Cargar imagen con Glide
+            if (articulo.imagenUrl.isNotEmpty()) {
+                Glide.with(contexto!!)
+                    .load(articulo.imagenUrl)
+                    .placeholder(R.drawable.profileicon)
+                    .error(R.drawable.profileicon)
+                    .into(iv_imagen)
+            } else {
+                iv_imagen.setImageResource(R.drawable.profileicon)
+            }
+
+            // Click para detalle
             vista.setOnClickListener {
                 val bundle = Bundle().apply {
                     putString("nombre", articulo.nombre)
@@ -119,10 +140,18 @@ class All_articlesFragment : Fragment() {
                     putString("color", articulo.categoria.color)
                     putString("imagenUrl", articulo.imagenUrl)
                 }
+
                 Navigation.findNavController(vista).navigate(R.id.detailProduct, bundle)
             }
 
             return vista
         }
+
+        fun actualizarLista(nuevaLista: ArrayList<Articulo>) {
+            articulos.clear()
+            articulos.addAll(nuevaLista)
+            notifyDataSetChanged()
+        }
     }
+
 }
