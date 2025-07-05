@@ -61,7 +61,7 @@
                 android:layout_height="20dp"
                 android:background="@drawable/ic_search"
                 android:layout_gravity="center"
-                android:id="@+id/iv_search_report">
+                android:id="@+id/iv_search_article">
 
             </ImageView>
 

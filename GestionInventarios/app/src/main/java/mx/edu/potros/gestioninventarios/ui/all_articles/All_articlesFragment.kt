@@ -1,22 +1,31 @@
 package mx.edu.potros.gestioninventarios.ui.all_articles
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.potros.gestioninventarios.DAO.ArticuloDAOFirestore
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 
 class All_articlesFragment : Fragment() {
 
+
     private var adaptador: AdaptadorListAllArticles? = null
-    private val listaArticulos: ArrayList<Articulo> = arrayListOf()
+
+    var categoriasSeleccionadas = ArrayList<String>()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +39,10 @@ class All_articlesFragment : Fragment() {
 
         val ivVolver: ImageView = view.findViewById(R.id.iv_back_all_articles)
         val tvAgregarArticulo: TextView = view.findViewById(R.id.agregarArticulo)
-        val ivAgregarArticulo: ImageView = view.findViewById(R.id.iv_add_article)
+        val ivSearch : ImageView = view.findViewById(R.id.iv_search_article)
+        val ivFiltros : ImageView = view.findViewById((R.id.iv_filter_all_articles))
+
+
 
         ivVolver.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -40,43 +52,168 @@ class All_articlesFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.newArticulo)
         }
 
-        ivAgregarArticulo.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.newArticulo)
+        ivSearch.setOnClickListener{
+            buscar()
         }
 
+        ivFiltros.setOnClickListener{
+            mostrarDialogoCategorias()
+        }
+
+
+
         val gridView: GridView = view.findViewById(R.id.list_all_articles)
-        adaptador = AdaptadorListAllArticles(requireContext(), listaArticulos)
+        adaptador = AdaptadorListAllArticles(view.context, ArrayList(DataProvider.listaArticulos))
         gridView.adapter = adaptador
+
+        DataProvider.cargarDatos(
+            adaptadorArticulos = adaptador
+        )
 
         cargarArticulosFirebase()
     }
 
     private fun cargarArticulosFirebase() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("articulos").get()
-            .addOnSuccessListener { result ->
-                listaArticulos.clear()
-                for (document in result) {
-                    val nombre = document.getString("nombre") ?: ""
-                    val cantidad = (document.getLong("cantidad") ?: 0L).toInt()
-                    val descripcion = document.getString("descripcion") ?: ""
-                    val costo = (document.getDouble("costo") ?: 0.0).toFloat()
-                    val imagenUrl = document.getString("imagenUrl") ?: ""
+//        val db = FirebaseFirestore.getInstance()
+//        db.collection("articulos").get()
+//            .addOnSuccessListener { result ->
+//                listaArticulos.clear()
+//                for (document in result) {
+//                    val nombre = document.getString("nombre") ?: ""
+//                    val cantidad = (document.getLong("cantidad") ?: 0L).toInt()
+//                    val descripcion = document.getString("descripcion") ?: ""
+//                    val costo = (document.getDouble("costo") ?: 0.0).toFloat()
+//                    val imagenUrl = document.getString("imagenUrl") ?: ""
+//
+//                    val categoriaMap = document.get("categoria") as? Map<String, Any>
+//                    val categoriaNombre = categoriaMap?.get("nombre") as? String ?: ""
+//                    val categoriaColor = categoriaMap?.get("color") as? String ?: "#000000"
+//
+//                    val categoria = Categoria(categoriaNombre, categoriaColor)
+//                    val articulo = Articulo(nombre, cantidad, descripcion, costo, categoria, imagenUrl)
+//                    listaArticulos.add(articulo)
+//                }
+//                adaptador?.notifyDataSetChanged()
+//            }
+//            .addOnFailureListener {
+//                Toast.makeText(requireContext(), "Error cargando artículos", Toast.LENGTH_SHORT).show()
+//            }
 
-                    val categoriaMap = document.get("categoria") as? Map<String, Any>
-                    val categoriaNombre = categoriaMap?.get("nombre") as? String ?: ""
-                    val categoriaColor = categoriaMap?.get("color") as? String ?: "#000000"
+//        DataProvider.articuloDAO.obtenerTodosLosArticulos(
+//            onSuccess = { lista ->
+//                listaArticulos = lista
+//                adaptador?.actualizarLista(lista)
+//
+//            },
+//            onFailure = { error ->
+//                Toast.makeText(context, "Error al obtener artículos", Toast.LENGTH_SHORT).show()
+//            }
+//        )
 
-                    val categoria = Categoria(categoriaNombre, categoriaColor)
-                    val articulo = Articulo(nombre, cantidad, descripcion, costo, categoria, imagenUrl)
-                    listaArticulos.add(articulo)
-                }
-                adaptador?.notifyDataSetChanged()
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Error cargando artículos", Toast.LENGTH_SHORT).show()
-            }
+
     }
+
+
+
+    private fun buscar(){
+        var nuevaLista = ArrayList<Articulo>()
+        var nuevaListaConFiltro = ArrayList<Articulo>()
+        var texto = view?.findViewById<EditText>(R.id.et_search_report)
+
+
+        nuevaLista.clear()
+        nuevaListaConFiltro.clear()
+
+        if(!categoriasSeleccionadas.isEmpty()){
+            for(e in DataProvider.listaArticulos){
+                if(categoriasSeleccionadas.contains(e.categoria.nombre)){
+                    nuevaListaConFiltro.add(e)
+                }
+            }
+
+            if (texto?.text.toString().equals("")) {
+                view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
+                adaptador?.actualizarLista(ArrayList(nuevaListaConFiltro))
+                Log.d("size", categoriasSeleccionadas.size.toString())
+            } else {
+
+                for (e in nuevaListaConFiltro) {
+                    if (e.nombre.contains(texto?.text.toString(), ignoreCase = true)) {
+                        nuevaLista.add(e)
+                    }
+
+                }
+
+                if (nuevaLista.isEmpty()) {
+                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.VISIBLE
+                } else {
+                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
+                }
+
+                adaptador?.actualizarLista(nuevaLista)
+
+            }
+        }
+
+        else {
+            if (texto?.text.toString().equals("")) {
+                view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
+                adaptador?.actualizarLista(ArrayList(DataProvider.listaArticulos))
+                Log.d("size", categoriasSeleccionadas.size.toString())
+            } else {
+
+                for (e in DataProvider.listaArticulos) {
+                    if (e.nombre.contains(texto?.text.toString(), ignoreCase = true)) {
+                        nuevaLista.add(e)
+                    }
+
+                }
+
+                if (nuevaLista.isEmpty()) {
+                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.VISIBLE
+                } else {
+                    view?.findViewById<TextView>(R.id.texto_vacio)?.visibility = View.GONE
+                }
+
+                adaptador?.actualizarLista(nuevaLista)
+            }
+        }
+    }
+
+
+
+    private fun mostrarDialogoCategorias() {
+        val checkboxes = DataProvider.listaCategorias.map { categoria ->
+            CheckBox(requireContext()).apply {
+                text = categoria.nombre
+                isChecked = categoria.nombre in categoriasSeleccionadas
+            }
+        }
+
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(40, 40, 40, 40)
+            checkboxes.forEach { addView(it) }
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Selecciona Categorías")
+            .setView(layout)
+            .setPositiveButton("Aplicar") { _, _ ->
+                categoriasSeleccionadas.clear()
+                categoriasSeleccionadas.addAll(
+                    checkboxes.filter { it.isChecked }.map { it.text.toString() }
+                )
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+
+
+
+
+
 
 
     private class AdaptadorListAllArticles : BaseAdapter {
@@ -139,6 +276,8 @@ class All_articlesFragment : Fragment() {
                     putString("descripcion", articulo.descripcion)
                     putString("color", articulo.categoria.color)
                     putString("imagenUrl", articulo.imagenUrl)
+                    putFloat("costo", articulo.costo)
+                    putString("idArticulo", articulo.idArticulo)
                 }
 
                 Navigation.findNavController(vista).navigate(R.id.detailProduct, bundle)

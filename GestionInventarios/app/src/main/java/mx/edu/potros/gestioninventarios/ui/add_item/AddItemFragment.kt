@@ -1,44 +1,36 @@
 package mx.edu.potros.gestioninventarios.ui.add_item
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import com.cloudinary.Cloudinary
-import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
-import com.cloudinary.utils.ObjectUtils
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import mx.edu.potros.gestioninventarios.DAO.SubirImagenDAOCloudinary
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentAddItemBinding
 import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.EntradasSalidas
 import yuku.ambilwarna.AmbilWarnaDialog
-import java.io.File
-import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.concurrent.thread
+
 
 class AddItemFragment : Fragment() {
 
@@ -51,20 +43,8 @@ class AddItemFragment : Fragment() {
     private val PICK_IMAGE_REQUEST = 1
     private var imagenSeleccionadaUri: Uri? = null
 
-//    private val cloudinary = Cloudinary(ObjectUtils.asMap(
-//        "cloud_name", "de7nyni5e",
-//        "api_key", "839685883949533",
-//        "upload_preset", "articulo-upload"
-//    ))
 
-
-    val CLOUD_NAME = "de7nyni5e"
-    val UPLOAD_PRESET = "articulo-upload"
-
-    var imageUri: Uri? = null
-
-
-
+    //DAO
 
 
 
@@ -88,9 +68,6 @@ class AddItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        initCloudinary()
-
-
         textoCategoria = view.findViewById(R.id.spinnerCategoríaArtículo)
 
         view.findViewById<ImageView>(R.id.regresar).setOnClickListener {
@@ -108,172 +85,36 @@ class AddItemFragment : Fragment() {
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
+
+
+
+
+
         binding.btnGuardarArt.setOnClickListener {
-           // subirImagenYGuardarArticulo()
 
+            val uri = imagenSeleccionadaUri
 
-
-            if (imagenSeleccionadaUri != null) {
-                uploadImagenDesdeUri(requireContext(), imagenSeleccionadaUri!!) { url ->
-                    if (url != null) {
-                        guardarArticuloEnFirestore(url)
-                    } else {
-                        Log.e("Upload", "Falló la subida de imagen")
-                    }
-                }
-            } else {
+            if (uri == null) {
                 Toast.makeText(requireContext(), "Selecciona una imagen primero", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
 
-
-
-
-
-            //Esto es para probar una imagen por defecto
-//            crearImagenTemporalDesdeDrawable(requireContext(), R.drawable.grafica)
-//
-//            uploadImagen(requireContext()) { url ->
-//                if (url != null) {
-//                    guardarArticuloEnFirestore(url)
-//                } else {
-//                    Log.e("Upload", "Falló la subida de imagen")
-//                }
-//            }
-
-
-
-
+            SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
+                if (url != null) {
+                    guardarArticuloEnFirestore(url)
+                } else {
+                    Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                }
+            }
 
         }
 
 
 
 
-
-
-
-
-
-
     }
 
-
-
-    private fun initCloudinary(){
-        val config: MutableMap<String, String> = HashMap<String, String>()
-        config["cloud_name"] = CLOUD_NAME
-
-        MediaManager.init(requireContext(), config)
-
-
-    }
-
-
-
-
-
-    fun uploadImagenDesdeUri(context: Context, uri: Uri, callback: (String?) -> Unit) {
-        try {
-            // Copiar el contenido del URI a un archivo temporal
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val archivoTemp = File(context.cacheDir, "imagen_subida_desde_galeria.jpg")
-            val outputStream = FileOutputStream(archivoTemp)
-
-            inputStream?.copyTo(outputStream)
-            inputStream?.close()
-            outputStream.flush()
-            outputStream.close()
-
-            // Subir el archivo temporal
-            MediaManager.get().upload(archivoTemp.absolutePath)
-                .unsigned(UPLOAD_PRESET)
-                .callback(object : UploadCallback {
-                    override fun onStart(requestId: String?) {
-                        Log.d("Upload", "Iniciando subida desde galería...")
-                    }
-
-                    override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
-                        Log.d("Upload", "Progreso: $bytes/$totalBytes")
-                    }
-
-                    override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-                        val url = resultData?.get("url") as? String
-                        Log.d("Upload", "Subida exitosa: $url")
-                        callback(url)
-                    }
-
-                    override fun onError(requestId: String?, error: ErrorInfo?) {
-                        Log.e("Upload Error", "Error: ${error?.description}")
-                        callback(null)
-                    }
-
-                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {
-                        Log.e("Upload Reintento", error?.description ?: "Sin detalles")
-                    }
-                }).dispatch()
-
-        } catch (e: Exception) {
-            Log.e("Upload", "Excepción al subir imagen desde Uri: ${e.message}")
-            callback(null)
-        }
-    }
-
-
-
-
-
-    fun uploadImagen(context: Context, callback: (String?) -> Unit) {
-        // Usa directamente el archivo, no el Uri
-        val archivoTemp = File(context.cacheDir, "imagen_prueba.png")
-
-        if (archivoTemp.exists()) {
-            MediaManager.get().upload(archivoTemp.absolutePath)
-                .unsigned(UPLOAD_PRESET)
-                .callback(object : UploadCallback {
-                    override fun onStart(requestId: String?) {
-                        Log.d("Upload", "Iniciando subida...")
-                    }
-
-                    override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
-                        Log.d("Upload", "Progreso: $bytes/$totalBytes")
-                    }
-
-                    override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-                        val url = resultData?.get("url") as? String
-                        Log.d("Upload", "Subida exitosa: $url")
-                        callback(url)
-                    }
-
-                    override fun onError(requestId: String?, error: ErrorInfo?) {
-                        Log.e("Upload Error", "Error: ${error?.description}")
-                        callback(null)
-                    }
-
-                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {
-                        Log.e("Upload Reintento", error?.description ?: "Sin detalles")
-                    }
-                }).dispatch()
-        } else {
-            Log.e("Upload", "Archivo no existe")
-            callback(null)
-        }
-    }
-
-
-
-
-
-    fun crearImagenTemporalDesdeDrawable(context: Context, drawableId: Int) {
-        val drawable = ContextCompat.getDrawable(context, drawableId) ?: throw Exception("Drawable no encontrado")
-        val bitmap = (drawable as BitmapDrawable).bitmap
-
-        val archivoTemp = File(context.cacheDir, "imagen_prueba.png")
-        val outputStream = FileOutputStream(archivoTemp)
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-        outputStream.flush()
-        outputStream.close()
-    }
 
 
 
@@ -288,39 +129,10 @@ class AddItemFragment : Fragment() {
     }
 
 
-    private fun subirImagenYGuardarArticulo() {
-        if (imagenSeleccionadaUri == null) {
-            Toast.makeText(context, "Selecciona una imagen", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        MediaManager.get().upload(imagenSeleccionadaUri)
-            .option("upload_preset", "articulo-upload")
-            .callback(object : UploadCallback {
-                override fun onStart(requestId: String?) {}
-                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
-
-                override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
-                    val url = resultData["secure_url"] as? String
-                    if (url != null) {
-                        guardarArticuloEnFirestore(url)
-                    } else {
-                        Toast.makeText(context, "Error: URL no obtenida", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onError(requestId: String?, error: ErrorInfo?) {
-                    Toast.makeText(context, "Error al subir imagen :c", Toast.LENGTH_SHORT).show()
-                    Log.e("Cloudinary", "Error: ${error?.description}")
-                }
-
-                override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
-            })
-            .dispatch()
-    }
 
 
     private fun guardarArticuloEnFirestore(imagenUrl: String) {
+
         val nombre = binding.nombreArticulo.text.toString().trim()
         val cantidad = binding.cantidadArticulo.text.toString().toIntOrNull() ?: 0
         val descripcion = binding.descripciNArticulo.text.toString().trim()
@@ -342,17 +154,50 @@ class AddItemFragment : Fragment() {
             costo = costo
         )
 
-        Firebase.firestore.collection("articulos")
-            .add(articulo)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Artículo guardado correctamente", Toast.LENGTH_SHORT).show()
-                binding.root.postDelayed({
-                    findNavController().navigate(R.id.detailProduct)
-                }, 1000)
+
+        DataProvider.articuloDAO.guardarArticulo(articulo,
+            onSuccess = {
+                EntradasSalidas()
+                var entrada = EntradasSalidas(
+                    "",
+                    articulo,
+                    cantidad,
+                    SimpleDateFormat("dd-MM-yyyy:HH-mm", Locale.getDefault()).format(Date()),
+                    "Registro",
+                    true
+                )
+                DataProvider.entradasSalidasDAO.guardarEntraSal(entrada,
+                    onSuccess = {
+                        Handler(Looper.getMainLooper()).postDelayed({
+
+                            val bundle = Bundle().apply {
+                                putString("nombre", articulo.nombre)
+                                putString("categoria", articulo.categoria.nombre)
+                                putInt("cantidad", articulo.cantidad)
+                                putString("descripcion", articulo.descripcion)
+                                putString("color", articulo.categoria.color)
+                                putString("imagenUrl", articulo.imagenUrl)
+                                putFloat("costo", articulo.costo)
+                                putString("idArticulo", articulo.idArticulo)
+                            }
+
+                            findNavController().navigate(R.id.detailProduct, bundle)
+                            DataProvider.cargarDatos()
+
+
+                        }, 500)
+
+                    },
+                    onFailure = {
+                        Log.d("Entrada", "Fallo")
+                    })
+                Toast.makeText(requireContext(), "Artículo guardado correctamente", Toast.LENGTH_SHORT).show()
+            },
+            onFailure = {
+                Toast.makeText(requireContext(), "Error al guardar el artículo", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(context, "Error al guardar el artículo", Toast.LENGTH_SHORT).show()
-            }
+        )
+
     }
 
     private fun mostrarDialogoCategorias() {
@@ -385,7 +230,7 @@ class AddItemFragment : Fragment() {
         val scrollView = ScrollView(context).apply {
             layoutParams = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                dpToPx(400)
+                dpToPx(250)
             )
             addView(radioGroup)
         }
@@ -431,18 +276,21 @@ class AddItemFragment : Fragment() {
         val colorSeleccionado = arrayOf("#FF0000")
         var colorCambiado = false
 
-        val btnColor = Button(context).apply {
+        val btnColor = Button(context) // Primero lo declaras
+
+        btnColor.apply {
             text = "Seleccionar color"
             setBackgroundColor(Color.parseColor(colorSeleccionado[0]))
             setOnClickListener {
                 val initialColor = Color.parseColor(colorSeleccionado[0])
                 AmbilWarnaDialog(context, initialColor, object : AmbilWarnaDialog.OnAmbilWarnaListener {
                     override fun onCancel(dialog: AmbilWarnaDialog?) {}
+
                     override fun onOk(dialog: AmbilWarnaDialog?, color: Int) {
                         val nuevoColor = String.format("#%06X", 0xFFFFFF and color)
                         if (nuevoColor != "#FF0000") colorCambiado = true
                         colorSeleccionado[0] = nuevoColor
-                        //btnColor.setBackgroundColor(color)
+                        btnColor.setBackgroundColor(Color.parseColor(nuevoColor)) // ✅ ACTUALIZA VISUALMENTE
                     }
                 }).show()
             }
@@ -478,16 +326,35 @@ class AddItemFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-                DataProvider.listaCategorias.add(
-                    Categoria(nombre = nombre, color = colorSeleccionado[0])
+                val categoria = Categoria("", nombre, colorSeleccionado[0])
+
+                Log.d("Usuario" , DataProvider.usuarioId)
+
+                DataProvider.categoriaDAO.guardarCategoria(
+                    categoria,
+                    onSuccess = {
+                        DataProvider.cargarDatos()
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(context, "Categoría guardada correctamente", Toast.LENGTH_SHORT).show()
+                            alerta.dismiss()
+                            mostrarDialogoCategorias()
+                        }, 500)
+
+                    },
+                    onFailure = {
+                        Toast.makeText(context, "Error al guardar la categoría", Toast.LENGTH_SHORT).show()
+                    }
                 )
-                alerta.dismiss()
-                mostrarDialogoCategorias()
+
+
+
             }
         }
 
         alerta.show()
     }
+
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()

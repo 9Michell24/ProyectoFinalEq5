@@ -11,11 +11,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
+import mx.edu.potros.gestioninventarios.DAO.UsuarioDAO
 import mx.edu.potros.gestioninventarios.R
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+
+    val usuarioDao = UsuarioDAO()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin: Button = findViewById(R.id.btnLogin)
         val btnRegister: Button = findViewById(R.id.btnRegistrar)
         val textClick: TextView = findViewById(R.id.textClick)
-      //  val currentUser= auth.currentUser
 
         btnLogin.setOnClickListener {
             val correoTexto = correo.text.toString().trim()
@@ -46,13 +49,12 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Si pasa validación, iniciar sesión
-//            val intento = Intent(this, MainActivity::class.java)
-//            startActivity(intento)
-//            finish()
 
             login(correoTexto, contraTexto)
+
         }
+
+
 
         btnRegister.setOnClickListener {
             val intento = Intent(this, Registro::class.java)
@@ -67,6 +69,34 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+
+
+    public override fun onStart() {
+        super.onStart()
+
+
+        val currentUser = usuarioDao.obtenerUsuarioActual()
+        if(currentUser != null){
+            goToMain(currentUser)
+        }
+    }
+
+
+
+    fun login(email: String, password: String){
+        usuarioDao.iniciarSesion(email, password,
+            onSuccess = { user ->
+                goToMain(user)
+            },
+            onFailure = { e ->
+                Toast.makeText(this, "Credenciales incorrectas: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+
+
+
     fun goToMain(user: FirebaseUser){
         val intent= Intent(this, MainActivity::class.java)
         intent.putExtra("user", user.email)
@@ -74,27 +104,6 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    public override fun onStart() {
-        super.onStart()
 
 
-        val currentUser=auth.currentUser
-        if(currentUser!=null){
-            goToMain(currentUser)
-        }
-    }
-
-    fun login(email: String, password: String){
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this){ task ->
-                if (task.isSuccessful){
-                    val user=auth.currentUser
-                    goToMain(user!!)
-                }
-
-                else{
-                    Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
 }

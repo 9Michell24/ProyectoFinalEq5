@@ -11,13 +11,18 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.Firebase
+import mx.edu.potros.gestioninventarios.DAO.IUsuarioDAO
+import mx.edu.potros.gestioninventarios.DAO.UsuarioDAO
 import mx.edu.potros.gestioninventarios.R
+import mx.edu.potros.gestioninventarios.objetoNegocio.Usuario
 import java.util.Calendar
 import java.util.Locale
 
 class Registro : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
+
+    private var usuarioDAO : IUsuarioDAO = UsuarioDAO()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +38,6 @@ class Registro : AppCompatActivity() {
         val btnRegistrar: Button = findViewById(R.id.btnRegistro)
 
 
-        //Firebase auth
-        auth = Firebase.auth
 
         // Filtro para no permitir espacios en las contraseñas
         val sinEspacios = InputFilter { source, _, _, _, _, _ ->
@@ -92,7 +95,23 @@ class Registro : AppCompatActivity() {
                 Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }else{
-                signIn(correoTexto, contraTexto)
+
+
+                var usuario = Usuario("", nombreTexto, correoTexto, fechaNacimientoTexto, generoSeleccionado, contraTexto, confContraTexto)
+
+                usuarioDAO.registrarConFirebaseAuthYGuardarFirestore(
+                    email = correoTexto,
+                    password = contraTexto,
+                    usuario = usuario,
+                    onSuccess = {
+                        Toast.makeText(this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    },
+                    onFailure = {
+                        Toast.makeText(this, "Error al registrar: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+                )
             }
         }
     }
@@ -115,33 +134,5 @@ class Registro : AppCompatActivity() {
         }
     }
 
-    fun signIn (email: String, password: String){
-        Log.d( "INFO", "email: ${email}, password: ${password}")
-        auth.createUserWithEmailAndPassword (email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information Log.d(tag: "INFO", msg: "signInWithEmail: success")
-                    Log.d("INFO", "signInWithEmail:success")
-                    val user = auth.currentUser
-                    val intento = Intent(this, LoginActivity::class.java)
 
-                    Toast.makeText(
-                        this,
-                        "Usuario registrado con éxito",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    startActivity(intento)
-                   // finish()
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("ERROR","signInWithEmail: failure", task.exception)
-                    Toast.makeText(
-                        baseContext,
-                        "El registro falló.",
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
-            }
-    }
 }

@@ -48,6 +48,7 @@
     <string name="categories_title">Categorías</string>
     <string name="btn_new_category">Nueva Categoría</string>
     <string name="erase_category"><u>Eliminar Categoría</u></string>
+    <string name="erase_article">Borrar artículo</string>
 
 
     <string name="add_new_product">Agregar artículo</string>
