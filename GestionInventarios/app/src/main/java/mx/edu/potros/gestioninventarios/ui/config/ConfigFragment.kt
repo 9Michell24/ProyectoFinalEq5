@@ -15,11 +15,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import mx.edu.potros.gestioninventarios.DAO.SubirImagenDAOCloudinary
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.activities.ContraseniaActivity1
 import mx.edu.potros.gestioninventarios.activities.LoginActivity
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider // Importar DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.Usuario // Asegúrate de importar tu clase Usuario
 import java.util.*
 
 class ConfigFragment : Fragment() {
@@ -91,90 +92,100 @@ class ConfigFragment : Fragment() {
             datePicker.show()
         }
 
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val db = FirebaseFirestore.getInstance()
+        // Ya no necesitas obtener el UID aquí directamente para pasar a Firestore
+        // DataProvider lo manejará.
+        // val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-        if (uid != null) {
-            val docRef = db.collection("usuarios").document(uid)
+        DataProvider.obtenerDatosUsuario(
+            onSuccess = { usuario ->
+                if (usuario != null) {
+                    nombreUsuario.setText(usuario.nombre)
+                    fechaNacimiento.setText(usuario.nacimiento)
+                    currentImageUrl = usuario.direccion_foto
 
-            docRef.get().addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val nombre = document.getString("nombre")
-                    val fecha = document.getString("fechaNacimiento")
-                    val genero = document.getString("genero")
-                    currentImageUrl = document.getString("imagenPerfil")
-
-                    nombreUsuario.setText(nombre ?: "")
-                    fechaNacimiento.setText(fecha ?: "")
-
-                    val index = adapter.getPosition(genero ?: "Masculino")
+                    val index = adapter.getPosition(usuario.genero)
                     if (index >= 0) {
                         spinnerConfig.setSelection(index)
                     }
 
-                    // Mostrar imagen si hay URL
                     if (!currentImageUrl.isNullOrBlank()) {
                         Glide.with(this)
                             .load(currentImageUrl)
                             .placeholder(R.drawable.profilepic)
                             .into(profileIcon)
                     }
-
                 } else {
                     Toast.makeText(requireContext(), "No se encontraron datos del usuario", Toast.LENGTH_SHORT).show()
                 }
-            }.addOnFailureListener {
-                Toast.makeText(requireContext(), "Error al cargar datos", Toast.LENGTH_SHORT).show()
+            },
+            onFailure = { e ->
+                Toast.makeText(requireContext(), "Error al cargar datos del usuario: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        btnGuardar.setOnClickListener {
+            val nombre = nombreUsuario.text.toString().trim()
+            val fecha = fechaNacimiento.text.toString().trim()
+            val genero = spinnerConfig.selectedItem.toString()
+            val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val email = FirebaseAuth.getInstance().currentUser?.email ?: ""
+
+            if (nombre.isEmpty()) {
+                Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            btnGuardar.setOnClickListener {
-                val nombre = nombreUsuario.text.toString().trim()
-                val fecha = fechaNacimiento.text.toString().trim()
-                val genero = spinnerConfig.selectedItem.toString()
+            if (fecha.isEmpty()) {
+                Toast.makeText(requireContext(), "Debes seleccionar una fecha válida", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                if (nombre.isEmpty()) {
-                    Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            val edad = calcularEdad(fecha)
+            if (edad < 13 || edad > 99) {
+                Toast.makeText(requireContext(), "Edad fuera de rango permitido (13 - 99 años)", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                if (fecha.isEmpty()) {
-                    Toast.makeText(requireContext(), "Debes seleccionar una fecha válida", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            fun guardarDatos(url: String? = null) {
+                val usuarioActualizado = Usuario(
+                    idUsuario = uid,
+                    nombre = nombre,
+                    correo = email,
+                    nacimiento = fecha,
+                    genero = genero,
+                    contra = null, // ¡Pasamos null porque ahora es nullable!
+                    direccion_foto = url ?: currentImageUrl,
+                    // Dejamos las listas con sus valores predeterminados (arrayListOf())
+                    // Si tu UsuarioDAO.editarUsuario usa .set(usuario), esto reemplazará
+                    // el documento completo en Firestore. Si necesitas actualizar solo campos específicos
+                    // sin afectar las listas existentes, tu DAO debería usar update() en lugar de set().
+                    // Pero para este error en particular, al hacer 'contra' nullable, ya se soluciona.
+                    listaCategoria = arrayListOf(),
+                    ListaArticulo = arrayListOf(),
+                    listaEntradasSalidas = arrayListOf()
+                )
 
-                val edad = calcularEdad(fecha)
-                if (edad < 13 || edad > 99) {
-                    Toast.makeText(requireContext(), "Edad fuera de rango permitido (13 - 99 años)", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                fun guardarDatos(url: String? = null) {
-                    val nuevosDatos = mutableMapOf<String, Any>(
-                        "nombre" to nombre,
-                        "fechaNacimiento" to fecha,
-                        "genero" to genero
-                    )
-                    url?.let { nuevosDatos["imagenPerfil"] = it }
-
-                    docRef.update(nuevosDatos).addOnSuccessListener {
+                DataProvider.editarDatosUsuario(usuarioActualizado,
+                    onSuccess = {
                         Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
-                    }.addOnFailureListener {
-                        Toast.makeText(requireContext(), "Error al actualizar datos", Toast.LENGTH_SHORT).show()
+                    },
+                    onFailure = { e ->
+                        Toast.makeText(requireContext(), "Error al actualizar datos: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
-                }
+                )
+            }
 
-                val uri = imagenSeleccionadaUri
-                if (uri != null) {
-                    SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
-                        if (url != null) {
-                            guardarDatos(url)
-                        } else {
-                            Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
-                        }
+            val uri = imagenSeleccionadaUri
+            if (uri != null) {
+                SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
+                    if (url != null) {
+                        guardarDatos(url)
+                    } else {
+                        Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    guardarDatos()
                 }
+            } else {
+                guardarDatos()
             }
         }
 
