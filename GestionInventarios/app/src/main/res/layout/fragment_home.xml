@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingBottom="65dp"
     tools:context=".ui.home.HomeFragment">
 
 
@@ -27,7 +28,7 @@
         android:textSize="40sp"
         android:gravity="center"
         android:textStyle="bold"
-        android:textColor="@color/text1">
+        android:textColor="@color/primary1">
 
     </TextView>
 

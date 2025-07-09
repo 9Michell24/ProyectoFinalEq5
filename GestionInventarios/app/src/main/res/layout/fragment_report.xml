@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
+    android:paddingBottom="65dp"
     tools:context=".ui.report.ReportFragment">
 
 
@@ -17,7 +18,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:layout_marginTop="15dp"
-        android:textColor="@color/text1">
+        android:textColor="@color/primary1">
 
     </TextView>
 

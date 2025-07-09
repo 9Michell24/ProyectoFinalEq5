@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EntradasSalidas">
+    android:paddingBottom="65dp"
+    tools:context=".ui.movement.MovementFragment">
 
     <ImageView
         android:id="@+id/regresar"
@@ -21,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Entradas y salidas"
-        android:textColor="@color/black"
+        android:textColor="@color/primary1"
         android:layout_gravity="center"
         android:textSize="25dp"
         android:textStyle="bold"/>
@@ -34,7 +35,7 @@
         android:layout_gravity="center"
         android:textSize="20dp"
         android:layout_marginBottom="40dp"
-        android:textColor="@color/primary1"
+        android:textColor="@color/text1"
         android:textStyle="bold"/>
 
     <RadioGroup

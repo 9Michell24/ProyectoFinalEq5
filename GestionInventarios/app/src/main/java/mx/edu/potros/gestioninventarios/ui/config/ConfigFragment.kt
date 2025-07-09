@@ -25,6 +25,15 @@ import java.util.*
 
 class ConfigFragment : Fragment() {
 
+
+    lateinit var nombreUsuario : EditText
+    lateinit var fechaNacimiento : EditText
+    lateinit var spinnerConfig : Spinner
+    lateinit var btnGuardar : Button
+
+    var editable : Boolean = false
+
+
     companion object {
         fun newInstance() = ConfigFragment()
     }
@@ -46,10 +55,10 @@ class ConfigFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val ivVolver: ImageView = view.findViewById(R.id.regresar)
-        val nombreUsuario: EditText = view.findViewById(R.id.nombreUsuario)
-        val fechaNacimiento: EditText = view.findViewById(R.id.fechaNacimiento)
-        val spinnerConfig: Spinner = view.findViewById(R.id.spinnerConfig)
-        val btnGuardar: Button = view.findViewById(R.id.btnGuardar)
+        nombreUsuario = view.findViewById(R.id.nombreUsuario)
+        fechaNacimiento = view.findViewById(R.id.fechaNacimiento)
+        spinnerConfig = view.findViewById(R.id.spinnerConfig)
+        btnGuardar = view.findViewById(R.id.btnGuardar)
         val btnCerrarSesion: Button = view.findViewById(R.id.btnLogout)
         val textClick: TextView = view.findViewById(R.id.textClick)
         profileIcon = view.findViewById(R.id.profileIcon)
@@ -61,6 +70,10 @@ class ConfigFragment : Fragment() {
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
+
+        isEditable(editable)
+
+
         val adapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.opciones_spinner2,
@@ -68,6 +81,8 @@ class ConfigFragment : Fragment() {
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerConfig.adapter = adapter
+
+
 
         fechaNacimiento.setOnClickListener {
             val partesFecha = fechaNacimiento.text.toString().split("/")
@@ -124,68 +139,110 @@ class ConfigFragment : Fragment() {
         )
 
         btnGuardar.setOnClickListener {
-            val nombre = nombreUsuario.text.toString().trim()
-            val fecha = fechaNacimiento.text.toString().trim()
-            val genero = spinnerConfig.selectedItem.toString()
-            val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-            val email = FirebaseAuth.getInstance().currentUser?.email ?: ""
 
-            if (nombre.isEmpty()) {
-                Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            if(editable == false){
+                isEditable(true)
             }
 
-            if (fecha.isEmpty()) {
-                Toast.makeText(requireContext(), "Debes seleccionar una fecha válida", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            else {
 
-            val edad = calcularEdad(fecha)
-            if (edad < 13 || edad > 99) {
-                Toast.makeText(requireContext(), "Edad fuera de rango permitido (13 - 99 años)", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+                if (editable) {
 
-            fun guardarDatos(url: String? = null) {
-                val usuarioActualizado = Usuario(
-                    idUsuario = uid,
-                    nombre = nombre,
-                    correo = email,
-                    nacimiento = fecha,
-                    genero = genero,
-                    contra = null, // ¡Pasamos null porque ahora es nullable!
-                    direccion_foto = url ?: currentImageUrl,
-                    // Dejamos las listas con sus valores predeterminados (arrayListOf())
-                    // Si tu UsuarioDAO.editarUsuario usa .set(usuario), esto reemplazará
-                    // el documento completo en Firestore. Si necesitas actualizar solo campos específicos
-                    // sin afectar las listas existentes, tu DAO debería usar update() en lugar de set().
-                    // Pero para este error en particular, al hacer 'contra' nullable, ya se soluciona.
-                    listaCategoria = arrayListOf(),
-                    ListaArticulo = arrayListOf(),
-                    listaEntradasSalidas = arrayListOf()
-                )
+                    val nombre = nombreUsuario.text.toString().trim()
+                    val fecha = fechaNacimiento.text.toString().trim()
+                    val genero = spinnerConfig.selectedItem.toString()
+                    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                    val email = FirebaseAuth.getInstance().currentUser?.email ?: ""
 
-                DataProvider.editarDatosUsuario(usuarioActualizado,
-                    onSuccess = {
-                        Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
-                    },
-                    onFailure = { e ->
-                        Toast.makeText(requireContext(), "Error al actualizar datos: ${e.message}", Toast.LENGTH_SHORT).show()
+                    if (nombre.isEmpty()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "El nombre no puede estar vacío",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
                     }
-                )
-            }
 
-            val uri = imagenSeleccionadaUri
-            if (uri != null) {
-                SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
-                    if (url != null) {
-                        guardarDatos(url)
+                    if (fecha.isEmpty()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Debes seleccionar una fecha válida",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
+
+                    val edad = calcularEdad(fecha)
+                    if (edad < 13 || edad > 99) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Edad fuera de rango permitido (13 - 99 años)",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
+
+                    fun guardarDatos(url: String? = null) {
+                        val usuarioActualizado = Usuario(
+                            idUsuario = uid,
+                            nombre = nombre,
+                            correo = email,
+                            nacimiento = fecha,
+                            genero = genero,
+                            contra = null, // ¡Pasamos null porque ahora es nullable!
+                            direccion_foto = url ?: currentImageUrl,
+                            // Dejamos las listas con sus valores predeterminados (arrayListOf())
+                            // Si tu UsuarioDAO.editarUsuario usa .set(usuario), esto reemplazará
+                            // el documento completo en Firestore. Si necesitas actualizar solo campos específicos
+                            // sin afectar las listas existentes, tu DAO debería usar update() en lugar de set().
+                            // Pero para este error en particular, al hacer 'contra' nullable, ya se soluciona.
+                            listaCategoria = arrayListOf(),
+                            ListaArticulo = arrayListOf(),
+                            listaEntradasSalidas = arrayListOf()
+                        )
+
+                        DataProvider.editarDatosUsuario(
+                            usuarioActualizado,
+                            onSuccess = {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Datos actualizados correctamente",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            onFailure = { e ->
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Error al actualizar datos: ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        )
+                    }
+
+                    val uri = imagenSeleccionadaUri
+                    if (uri != null) {
+                        SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
+                            if (url != null) {
+                                guardarDatos(url)
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Error al subir imagen",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     } else {
-                        Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                        guardarDatos()
+                        editable = false
+                        isEditable(editable)
                     }
+
+                } else {
+
                 }
-            } else {
-                guardarDatos()
+
             }
         }
 
@@ -231,4 +288,38 @@ class ConfigFragment : Fragment() {
             0
         }
     }
+
+
+    private fun isEditable(accion : Boolean){
+
+        if(accion){
+            spinnerConfig.isEnabled = true
+            nombreUsuario.isEnabled = true
+            fechaNacimiento.isEnabled = true
+            editable = true
+            btnGuardar.setText("Guardar")
+
+        }
+
+        else{
+            spinnerConfig.isEnabled = false
+            nombreUsuario.isEnabled = false
+            fechaNacimiento.isEnabled = false
+            btnGuardar.setText("Actualizar Datos")
+
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

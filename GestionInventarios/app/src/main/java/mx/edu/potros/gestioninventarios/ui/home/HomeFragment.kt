@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import mx.edu.potros.gestioninventarios.DAO.CategoriaDAOFirestore
 import mx.edu.potros.gestioninventarios.R
@@ -96,9 +97,6 @@ class HomeFragment : Fragment() {
                     .text = DataProvider.articulosActuales.toString()
             }
         )
-
-
-
 
 
 

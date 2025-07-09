@@ -44,9 +44,6 @@ class AddItemFragment : Fragment() {
     private var imagenSeleccionadaUri: Uri? = null
 
 
-    //DAO
-
-
 
 
     override fun onCreateView(
@@ -62,10 +59,14 @@ class AddItemFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
 
 
         textoCategoria = view.findViewById(R.id.spinnerCategoríaArtículo)
@@ -84,8 +85,6 @@ class AddItemFragment : Fragment() {
             }
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
-
-
 
 
 

@@ -1,6 +1,7 @@
 package mx.edu.potros.gestioninventarios.activities
 
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -37,6 +38,25 @@ class MainActivity : AppCompatActivity() {
         )
 
         navView.setupWithNavController(navController)
+
+
+        //Codigo para ocultar la barra en ciertas pantallas
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.detailProduct,
+                R.id.newArticulo,
+                    R.id.configFragment,
+                R.id.newCategories -> {
+                    binding.navView.visibility = View.GONE
+                }
+                else -> {
+                    binding.navView.visibility = View.VISIBLE
+                }
+            }
+        }
+
+
+
     }
 
 

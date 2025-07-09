@@ -30,9 +30,8 @@ object DataProvider {
         adaptadorEntraSal: BaseAdapter? = null,
         alFinalizarEntradas: (() -> Unit)? = null
     ){
-        listaCategorias.clear()
-        listaArticulos.clear()
-        listaEntradasSalidas.clear()
+
+        limpiarDatos()
 
         categoriaDAO.obtenerTodosLasCategorias(
             onSuccess = { lista ->
@@ -108,4 +107,16 @@ object DataProvider {
     ) {
         usuarioDAO.editarUsuario(usuario, onSuccess, onFailure)
     }
+
+
+
+    fun limpiarDatos(){
+
+        listaCategorias.clear()
+        listaArticulos.clear()
+        listaEntradasSalidas.clear()
+
+    }
+
+
 }
