@@ -3,16 +3,20 @@ package mx.edu.potros.gestioninventarios.ui.config
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.potros.gestioninventarios.DAO.SubirImagenDAOCloudinary
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.activities.ContraseniaActivity1
 import mx.edu.potros.gestioninventarios.activities.LoginActivity
@@ -25,10 +29,10 @@ class ConfigFragment : Fragment() {
     }
 
     private val viewModel: ConfigViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val PICK_IMAGE_REQUEST = 1001
+    private var imagenSeleccionadaUri: Uri? = null
+    private lateinit var profileIcon: ImageView
+    private var currentImageUrl: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +51,15 @@ class ConfigFragment : Fragment() {
         val btnGuardar: Button = view.findViewById(R.id.btnGuardar)
         val btnCerrarSesion: Button = view.findViewById(R.id.btnLogout)
         val textClick: TextView = view.findViewById(R.id.textClick)
+        profileIcon = view.findViewById(R.id.profileIcon)
 
-        // Configurar spinner de género
+        profileIcon.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK).apply {
+                type = "image/*"
+            }
+            startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        }
+
         val adapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.opciones_spinner2,
@@ -57,7 +68,6 @@ class ConfigFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerConfig.adapter = adapter
 
-        // Selector de fecha
         fechaNacimiento.setOnClickListener {
             val partesFecha = fechaNacimiento.text.toString().split("/")
             val dia = partesFecha.getOrNull(0)?.toIntOrNull() ?: 1
@@ -81,19 +91,18 @@ class ConfigFragment : Fragment() {
             datePicker.show()
         }
 
-        // Obtener UID del usuario actual
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val db = FirebaseFirestore.getInstance()
 
         if (uid != null) {
             val docRef = db.collection("usuarios").document(uid)
 
-            // Cargar datos del usuario desde Firestore
             docRef.get().addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val nombre = document.getString("nombre")
                     val fecha = document.getString("fechaNacimiento")
                     val genero = document.getString("genero")
+                    currentImageUrl = document.getString("imagenPerfil")
 
                     nombreUsuario.setText(nombre ?: "")
                     fechaNacimiento.setText(fecha ?: "")
@@ -102,6 +111,15 @@ class ConfigFragment : Fragment() {
                     if (index >= 0) {
                         spinnerConfig.setSelection(index)
                     }
+
+                    // Mostrar imagen si hay URL
+                    if (!currentImageUrl.isNullOrBlank()) {
+                        Glide.with(this)
+                            .load(currentImageUrl)
+                            .placeholder(R.drawable.profilepic)
+                            .into(profileIcon)
+                    }
+
                 } else {
                     Toast.makeText(requireContext(), "No se encontraron datos del usuario", Toast.LENGTH_SHORT).show()
                 }
@@ -109,7 +127,6 @@ class ConfigFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error al cargar datos", Toast.LENGTH_SHORT).show()
             }
 
-            // Guardar cambios al presionar el botón
             btnGuardar.setOnClickListener {
                 val nombre = nombreUsuario.text.toString().trim()
                 val fecha = fechaNacimiento.text.toString().trim()
@@ -131,16 +148,32 @@ class ConfigFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-                val nuevosDatos = mapOf(
-                    "nombre" to nombre,
-                    "fechaNacimiento" to fecha,
-                    "genero" to genero
-                )
+                fun guardarDatos(url: String? = null) {
+                    val nuevosDatos = mutableMapOf<String, Any>(
+                        "nombre" to nombre,
+                        "fechaNacimiento" to fecha,
+                        "genero" to genero
+                    )
+                    url?.let { nuevosDatos["imagenPerfil"] = it }
 
-                docRef.update(nuevosDatos).addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
-                }.addOnFailureListener {
-                    Toast.makeText(requireContext(), "Error al actualizar datos", Toast.LENGTH_SHORT).show()
+                    docRef.update(nuevosDatos).addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener {
+                        Toast.makeText(requireContext(), "Error al actualizar datos", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                val uri = imagenSeleccionadaUri
+                if (uri != null) {
+                    SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
+                        if (url != null) {
+                            guardarDatos(url)
+                        } else {
+                            Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    guardarDatos()
                 }
             }
         }
@@ -160,8 +193,14 @@ class ConfigFragment : Fragment() {
             val intent = Intent(requireContext(), ContraseniaActivity1::class.java)
             startActivity(intent)
         }
+    }
 
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == AppCompatActivity.RESULT_OK && data?.data != null) {
+            imagenSeleccionadaUri = data.data
+            profileIcon.setImageURI(imagenSeleccionadaUri)
+        }
     }
 
     private fun calcularEdad(fechaStr: String): Int {
