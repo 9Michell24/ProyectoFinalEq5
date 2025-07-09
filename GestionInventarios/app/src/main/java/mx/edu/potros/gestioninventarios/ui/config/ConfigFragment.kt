@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import mx.edu.potros.gestioninventarios.R
+import mx.edu.potros.gestioninventarios.activities.ContraseniaActivity1
 import mx.edu.potros.gestioninventarios.activities.LoginActivity
 import java.util.*
 
@@ -45,6 +46,7 @@ class ConfigFragment : Fragment() {
         val spinnerConfig: Spinner = view.findViewById(R.id.spinnerConfig)
         val btnGuardar: Button = view.findViewById(R.id.btnGuardar)
         val btnCerrarSesion: Button = view.findViewById(R.id.btnLogout)
+        val textClick: TextView = view.findViewById(R.id.textClick)
 
         // Configurar spinner de género
         val adapter = ArrayAdapter.createFromResource(
@@ -153,6 +155,13 @@ class ConfigFragment : Fragment() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
+
+        textClick.setOnClickListener {
+            val intent = Intent(requireContext(), ContraseniaActivity1::class.java)
+            startActivity(intent)
+        }
+
+
     }
 
     private fun calcularEdad(fechaStr: String): Int {
