@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.activities.LoginActivity
 import java.util.*
@@ -39,13 +40,22 @@ class ConfigFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val ivVolver: ImageView = view.findViewById(R.id.regresar)
+        val nombreUsuario: EditText = view.findViewById(R.id.nombreUsuario)
         val fechaNacimiento: EditText = view.findViewById(R.id.fechaNacimiento)
         val spinnerConfig: Spinner = view.findViewById(R.id.spinnerConfig)
+        val btnGuardar: Button = view.findViewById(R.id.btnGuardar)
+        val btnCerrarSesion: Button = view.findViewById(R.id.btnLogout)
 
-        // Fecha inicial
-        fechaNacimiento.setText("20/03/1976")
+        // Configurar spinner de género
+        val adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.opciones_spinner2,
+            android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerConfig.adapter = adapter
 
-        // Click para seleccionar fecha
+        // Selector de fecha
         fechaNacimiento.setOnClickListener {
             val partesFecha = fechaNacimiento.text.toString().split("/")
             val dia = partesFecha.getOrNull(0)?.toIntOrNull() ?: 1
@@ -69,30 +79,67 @@ class ConfigFragment : Fragment() {
             datePicker.show()
         }
 
-        // Configuración del Spinner de género
-        val adapter = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.opciones_spinner2,
-            android.R.layout.simple_spinner_item
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerConfig.adapter = adapter
+        // Obtener UID del usuario actual
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val db = FirebaseFirestore.getInstance()
 
-        // Valor inicial (opcional)
-        val valorInicial = "Masculino"
-        val index = adapter.getPosition(valorInicial)
-        spinnerConfig.setSelection(index)
+        if (uid != null) {
+            val docRef = db.collection("usuarios").document(uid)
 
-        // Escuchar selección
-        spinnerConfig.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val generoSeleccionado = parent.getItemAtPosition(position).toString()
-               // Toast.makeText(requireContext(), "Seleccionaste: $generoSeleccionado", Toast.LENGTH_SHORT).show()
-                // Aquí puedes guardar el valor en una variable o ViewModel si lo necesitas
+            // Cargar datos del usuario desde Firestore
+            docRef.get().addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val nombre = document.getString("nombre")
+                    val fecha = document.getString("fechaNacimiento")
+                    val genero = document.getString("genero")
+
+                    nombreUsuario.setText(nombre ?: "")
+                    fechaNacimiento.setText(fecha ?: "")
+
+                    val index = adapter.getPosition(genero ?: "Masculino")
+                    if (index >= 0) {
+                        spinnerConfig.setSelection(index)
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "No se encontraron datos del usuario", Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener {
+                Toast.makeText(requireContext(), "Error al cargar datos", Toast.LENGTH_SHORT).show()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // No hacer nada
+            // Guardar cambios al presionar el botón
+            btnGuardar.setOnClickListener {
+                val nombre = nombreUsuario.text.toString().trim()
+                val fecha = fechaNacimiento.text.toString().trim()
+                val genero = spinnerConfig.selectedItem.toString()
+
+                if (nombre.isEmpty()) {
+                    Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (fecha.isEmpty()) {
+                    Toast.makeText(requireContext(), "Debes seleccionar una fecha válida", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val edad = calcularEdad(fecha)
+                if (edad < 13 || edad > 99) {
+                    Toast.makeText(requireContext(), "Edad fuera de rango permitido (13 - 99 años)", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val nuevosDatos = mapOf(
+                    "nombre" to nombre,
+                    "fechaNacimiento" to fecha,
+                    "genero" to genero
+                )
+
+                docRef.update(nuevosDatos).addOnSuccessListener {
+                    Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Toast.makeText(requireContext(), "Error al actualizar datos", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -100,11 +147,8 @@ class ConfigFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        val btnCerrarSesion: Button = view.findViewById(R.id.btnLogout)
         btnCerrarSesion.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-
-            // Redirigir al login
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
