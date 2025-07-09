@@ -2,6 +2,7 @@ package mx.edu.potros.gestioninventarios.ui.categories
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.widget.GridView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import mx.edu.potros.gestioninventarios.R
@@ -72,6 +74,7 @@ class CategoriesFragment : Fragment() {
 
             view.findViewById<TextView>(R.id.by_category_category).setTextColor(Color.parseColor(DataProvider.listaCategorias[pos].color))
             view.findViewById<View>(R.id.by_category_line).setBackgroundColor(Color.parseColor(DataProvider.listaCategorias[pos].color))
+            view.findViewById<TextView>(R.id.by_category_category).setText(DataProvider.listaCategorias[pos].nombre)
 
 
             for (e in DataProvider.listaEntradasSalidas) {
@@ -86,7 +89,26 @@ class CategoriesFragment : Fragment() {
             }
         }
 
-        val adaptador = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, datos)
+        val adaptador = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, datos) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+
+                textView.textSize = 22f
+                textView.setTypeface(null, Typeface.BOLD)
+
+                val texto = getItem(position)
+                if (texto != null) {
+                    if (texto.startsWith("+")) {
+                        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.entrada_texto))
+                    } else if (texto.startsWith("-")) {
+                        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.salida_texto))
+                    }
+                }
+
+                return view
+            }
+        }
 
 
         val gridView = view.findViewById<GridView>(R.id.grid_view_by_categories)

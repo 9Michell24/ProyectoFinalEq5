@@ -24,4 +24,10 @@
 
     <color name="red">#FA0202</color>
 
+
+
+
+    <color name="entrada_texto">#4CAF50</color>
+    <color name="salida_texto">#F44336</color>
+
 </resources>

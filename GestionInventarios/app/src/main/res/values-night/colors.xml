@@ -8,4 +8,9 @@
     <color name="text_search">#BDBDBD</color>
     <color name="layout2">#121212</color>
     <color name="red">#FF6B6B</color>
+
+
+
+    <color name="entrada_texto">#81C784</color>
+    <color name="salida_texto">#E57373</color>
 </resources>
