@@ -99,6 +99,8 @@ class MovementFragment : Fragment() {
                 editTextFecha.setText(fecha)
             }, año, mes, dia)
 
+            datePicker.datePicker.maxDate = calendario.timeInMillis
+
             datePicker.show()
         }
 

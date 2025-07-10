@@ -256,6 +256,7 @@ class HomeFragment : Fragment() {
             vista.setOnClickListener{
                 val bundle = Bundle().apply {
                     putInt("position", position)
+                    putInt("totalArticles", contador)
 
                 }
                 Navigation.findNavController(vista).navigate(R.id.categoriesFragment, bundle)
