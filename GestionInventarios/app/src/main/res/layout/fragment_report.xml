@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="65dp"
     tools:context=".ui.report.ReportFragment">
 
@@ -16,7 +17,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:layout_marginTop="15dp"
-        android:textColor="@color/primary1"/>
+        android:textColor="@color/primary1" />
 
     <TextView
         android:id="@+id/dates_text_report"
@@ -31,7 +32,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="12dp"
         android:visibility="invisible"
-        android:textColor="@color/primary1"/>
+        android:textColor="@color/primary1" />
 
     <LinearLayout
         android:layout_width="340dp"
@@ -54,43 +55,56 @@
                 android:textColor="@color/text_search"
                 android:textStyle="bold"
                 android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent" />
 
             <ImageView
                 android:id="@+id/iv_search_report"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/ic_search"/>
+                android:background="@drawable/ic_search" />
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/iv_dates_report"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:background="@drawable/ic_calendar"
-            android:layout_marginLeft="5dp"
-            android:id="@+id/iv_dates_report"/>
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
+    <!-- 📊 Aquí está la gráfica circular -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/round_layout"
         android:layout_marginRight="30dp"
         android:layout_marginLeft="30dp"
         android:orientation="vertical"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:gravity="center">
 
-        <ImageView
-            android:id="@+id/graphic_home"
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:background="@drawable/grafica"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/graph_container"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/graphic_home"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="370dp"
         android:background="@drawable/round_layout2"
         android:layout_marginRight="30dp"
         android:layout_marginLeft="30dp"
@@ -112,7 +126,7 @@
                 android:textSize="22sp"
                 android:layout_marginLeft="20dp"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
 
             <TextView
                 android:id="@+id/tv_all_articles_report"
@@ -124,7 +138,7 @@
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:layout_marginRight="30dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
         </LinearLayout>
 
         <TextView
@@ -136,18 +150,19 @@
             android:textSize="22sp"
             android:layout_marginLeft="20dp"
             android:textStyle="bold"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
-        <!-- Aquí sustituimos el GridView por LinearLayout -->
-        <LinearLayout
+        <GridView
             android:id="@+id/list_all_movements"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_width="300dp"
+            android:layout_height="180dp"
+            android:layout_weight="7.2"
+            android:numColumns="1"
+            android:verticalSpacing="12dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginLeft="20dp" />
 
         <TextView
             android:id="@+id/see_articles_reports"
@@ -160,6 +175,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginBottom="20dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>
