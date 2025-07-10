@@ -8,15 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.GridView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -25,19 +20,13 @@ import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentReportBinding
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.utilities.CustomBarDrawable
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class ReportFragment : Fragment() {
 
     private var _binding: FragmentReportBinding? = null
-
-    private var adaptador : AdaptadorListaReport? = null
-
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -45,14 +34,9 @@ class ReportFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(ReportViewModel::class.java)
-
+        ViewModelProvider(this).get(ReportViewModel::class.java)
         _binding = FragmentReportBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -64,11 +48,8 @@ class ReportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val tvSeeAllProducts: TextView = view.findViewById(R.id.see_articles_reports)
-
-        val ivFilterDates : ImageView = view.findViewById(R.id.iv_dates_report)
-
-        var tvDatesText = view.findViewById<TextView>(R.id.dates_text_report)
-
+        val ivFilterDates: ImageView = view.findViewById(R.id.iv_dates_report)
+        val tvDatesText: TextView = view.findViewById(R.id.dates_text_report)
 
         val constraintsBuilder = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
@@ -81,14 +62,11 @@ class ReportFragment : Fragment() {
 
         ivFilterDates.setOnClickListener {
             dateRangePicker.show(parentFragmentManager, "DATE_RANGE_PICKER")
-
         }
 
         dateRangePicker.addOnPositiveButtonClickListener { selection ->
             val startDate = selection.first
             val endDate = selection.second
-            // Aquí puedes usar startDate y endDate
-
 
             if (startDate != null && endDate != null) {
                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -97,10 +75,8 @@ class ReportFragment : Fragment() {
 
                 tvDatesText.text = "Desde: $start hasta $end"
                 tvDatesText.visibility = View.VISIBLE
-
             }
         }
-
 
         dateRangePicker.addOnNegativeButtonClickListener {
             tvDatesText.visibility = View.INVISIBLE
@@ -110,128 +86,56 @@ class ReportFragment : Fragment() {
             tvDatesText.visibility = View.INVISIBLE
         }
 
-
-        var cantidad : Int = 0
-
-        for(e in DataProvider.listaEntradasSalidas){
-            if (e.isEntrada){
-                cantidad = cantidad + e.cantidad
+        var cantidad = 0
+        for (e in DataProvider.listaEntradasSalidas) {
+            if (e.isEntrada) {
+                cantidad += e.cantidad
             }
         }
-
-        view.findViewById<TextView>(R.id.tv_all_articles_report).setText(cantidad.toString())
-
+        view.findViewById<TextView>(R.id.tv_all_articles_report).text = cantidad.toString()
 
         tvSeeAllProducts.setOnClickListener {
-
-            //popBackStack es para volver al fragment anterior
             findNavController().navigate(R.id.allProdutsFragment)
-
         }
 
+        // 👇 Aquí llenamos las barras dinámicamente en lugar del GridView
+        val contenedorBarras: LinearLayout = view.findViewById(R.id.list_all_movements)
+        contenedorBarras.removeAllViews()
 
-        adaptador = AdaptadorListaReport(view.context, ArrayList(DataProvider.listaCategorias))
-
-        val gridView : GridView = view.findViewById(R.id.list_all_movements)
-
-        gridView.adapter = adaptador
-
-
-
-
-
-    }
-
-
-
-    private class AdaptadorListaReport : BaseAdapter{
-
-        var categorias = ArrayList<Categoria>()
-        var context : Context? = null
-
-        constructor(context: Context, categorias: ArrayList<Categoria>){
-            this.context = context
-            this.categorias = categorias
-        }
-
-
-        override fun getCount(): Int {
-            return categorias.size
-        }
-
-        override fun getItem(position: Int): Any {
-            return categorias[position]
-        }
-
-        override fun getItemId(position: Int): Long {
-            return position.toLong()
-        }
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            var categoria = categorias[position]
-            var inflador = LayoutInflater.from(context)
-            var vista = inflador.inflate(R.layout.design_category_report_list, null)
-
-
-            var tvTitle : TextView = vista.findViewById(R.id.tv_category_name_report)
-            var tvNumberUp : TextView = vista.findViewById(R.id.tv_category_number_up_report)
-            var tvNumberDown : TextView = vista.findViewById(R.id.tv_category_number_down_report)
-
-            val fondoUp: LinearLayout = vista.findViewById(R.id.report_list_category_up)
-            val fondoDown: LinearLayout = vista.findViewById(R.id.report_list_category_down)
-
-
-            var up = 0
-            var down = 0
-
-            for (e in DataProvider.listaEntradasSalidas){
-                if(e.articulo.categoria.nombre.equals(categoria.nombre)){
-                    if(e.isEntrada){
-                        up = up + e.cantidad
-                    }
-                    else{
-                        down = down + e.cantidad
-                    }
-
+        for (categoria in DataProvider.listaCategorias) {
+            val barra = ImageView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    50
+                ).also {
+                    it.topMargin = 8
+                    it.bottomMargin = 8
                 }
+                background = CustomBarDrawable(requireContext(), categoria)
             }
 
-            tvTitle.setText(categoria.nombre)
-            tvNumberUp.setText(up.toString())
-           // tvNumberDown.setText(down.toString())
-
-
-            val color = Color.parseColor(categoria.color)
-
-            val drawableUp = GradientDrawable()
-            drawableUp.cornerRadius = 40f
-            drawableUp.setColor(color)
-
-            val drawableDown = GradientDrawable()
-            drawableDown.cornerRadius = 40f
-            drawableDown.setColor(Color.parseColor("#8A8A8A"))
-
-
-            fondoUp.background = drawableUp
-            fondoDown.background = drawableDown
-
-            vista.setOnClickListener{
-                val bundle = Bundle().apply {
-                    putInt("position", position)
-
-                }
-                //Navigation.findNavController(vista).navigate(R.id.categoriesFragment, bundle)
-                Toast.makeText(context, "No implementado aun", Toast.LENGTH_SHORT).show()
-
+            val texto = TextView(requireContext()).apply {
+                text = categoria.nombre
+                textSize = 16f
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.primary1))
             }
 
-            return vista
+            val wrapper = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).also {
+                    it.bottomMargin = 16
+                }
+                addView(texto)
+                addView(barra)
+            }
 
+            contenedorBarras.addView(wrapper)
         }
-
     }
-
-
 }
+
 
 
