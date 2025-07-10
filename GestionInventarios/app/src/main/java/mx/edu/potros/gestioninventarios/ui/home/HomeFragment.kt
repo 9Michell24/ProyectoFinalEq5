@@ -42,7 +42,7 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         val txtCategoria: TextView = root.findViewById(R.id.category_home)
-        val txtSeeArticles: TextView = root.findViewById(R.id.see_datail_article) // Este parece no usarse
+        val txtSeeArticles: TextView = root.findViewById(R.id.see_datail_article)
         val imConfig: ImageView = root.findViewById(R.id.iv_config)
         val llAllArticles: LinearLayout = root.findViewById(R.id.ll_home_section_all_articles)
 
@@ -66,9 +66,6 @@ class HomeFragment : Fragment() {
         val gridView: GridView = root.findViewById(R.id.lista_categorias_home)
         gridView.adapter = adaptador
 
-        // NOTA: La primera carga se sigue haciendo aquí en onCreateView
-        // para asegurar que los datos estén disponibles cuando se crea la vista.
-        // La recarga subsiguiente se hará en onResume.
         DataProvider.cargarDatos(
             adaptadorCategorias = adaptador,
             alFinalizarEntradas = {
@@ -86,8 +83,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // --- LA SOLUCIÓN CLAVE ---
-        // Vuelve a cargar los datos y actualiza la UI cada vez que el fragmento se hace visible
+
         DataProvider.cargarDatos(
             adaptadorCategorias = adaptador, // Pasa el adaptador para que DataProvider lo notifique
             alFinalizarEntradas = {
@@ -127,7 +123,6 @@ class HomeFragment : Fragment() {
 
             var contador = 0
             // Suma la cantidad de artículos en cada categoría
-            // Es importante que listaArticulos de DataProvider esté actualizada
             for (articulo in DataProvider.listaArticulos) {
                 if (articulo.categoria.nombre == categoria.nombre) {
                     contador += articulo.cantidad // Suma directamente la cantidad actual del artículo
@@ -152,8 +147,7 @@ class HomeFragment : Fragment() {
                     // Si quieres pasar el nombre de la categoría para filtrar, también sería útil:
                     putString("categoryName", categoria.nombre)
                 }
-                // Asegúrate de que R.id.categoriesFragment es el destino correcto
-                // y que categoriesFragment puede recibir estos bundles para filtrar
+
                 Navigation.findNavController(vista).navigate(R.id.categoriesFragment, bundle)
             }
 
@@ -161,9 +155,6 @@ class HomeFragment : Fragment() {
         }
 
         fun actualizarLista(nuevaLista: ArrayList<Categoria>) {
-            // Este método realmente no se usa en la lógica actual de DataProvider.cargarDatos
-            // ya que DataProvider ya actualiza DataProvider.listaCategorias
-            // y luego notifica al adaptador que se le pasa.
             categorias.clear()
             categorias.addAll(nuevaLista)
             notifyDataSetChanged()

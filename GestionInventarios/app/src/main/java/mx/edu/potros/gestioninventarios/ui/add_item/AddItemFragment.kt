@@ -42,11 +42,11 @@ class AddItemFragment : Fragment() {
     private var imagenSeleccionadaUri: Uri? = null
 
     // --- Nuevas propiedades para el modo de edición ---
-    private var isEditMode: Boolean = false // Indica si estamos en modo edición o añadiendo
-    private var isCurrentlyEditable: Boolean = false // Controla si los campos están habilitados
-    private var articleToEditId: String? = null // ID del artículo si estamos editando
-    private var originalImageUrl: String? = null // Para mantener la URL si no se cambia la imagen
-    private var originalQuantity: Int = 0 // Para calcular el movimiento de stock al editar
+    private var isEditMode: Boolean = false
+    private var isCurrentlyEditable: Boolean = false
+    private var articleToEditId: String? = null
+    private var originalImageUrl: String? = null
+    private var originalQuantity: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,14 +66,13 @@ class AddItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textoCategoria = binding.spinnerCategorAArtCulo // Usamos binding para consistencia
+        textoCategoria = binding.spinnerCategorAArtCulo
 
         binding.regresar.setOnClickListener {
             findNavController().popBackStack()
         }
 
         binding.llSelectCategoryRegisterArticle.setOnClickListener {
-            // Solo permitir abrir diálogo de categoría si los campos son editables
             if (isCurrentlyEditable) {
                 mostrarDialogoCategorias()
             } else {
@@ -106,8 +105,8 @@ class AddItemFragment : Fragment() {
                 val costo = bundle.getFloat("costo")
                 val imagenUrl = bundle.getString("imagenUrl")
 
-                originalImageUrl = imagenUrl // Guarda la URL original
-                originalQuantity = cantidad // Guarda la cantidad original
+                originalImageUrl = imagenUrl
+                originalQuantity = cantidad
 
                 // Precargar los campos con los datos del artículo
                 binding.nombreArticulo.setText(nombre)
@@ -137,16 +136,15 @@ class AddItemFragment : Fragment() {
 
                 // En modo edición, los campos NO son editables inicialmente
                 isCurrentlyEditable = false
-                isEditable(false) // Deshabilita los campos y establece el botón para "Editar Artículo"
+                isEditable(false)
             } else {
-                // Si NO estamos en modo edición (es decir, agregando un artículo nuevo)
-                isEditMode = false // Solo para asegurar
+
+                isEditMode = false
                 isCurrentlyEditable = true // Los campos son editables por defecto
                 isEditable(true) // Habilita los campos y establece el botón en "Guardar"
                 binding.btnGuardarArt.text = "Guardar" // Asegurarse de que el texto inicial sea "Guardar"
             }
         } ?: run {
-            // Si no hay argumentos, asumimos que es para agregar un nuevo artículo
             isEditMode = false
             isCurrentlyEditable = true
             isEditable(true)

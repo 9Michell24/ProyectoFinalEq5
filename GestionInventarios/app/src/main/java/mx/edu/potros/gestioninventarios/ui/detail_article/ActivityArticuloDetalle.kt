@@ -98,21 +98,17 @@ class ActivityArticuloDetalle : Fragment() {
 
         eraseArticle.setOnClickListener {
             mostrarDialogoConfirmacionEliminar {
-                // Asegúrate de que el ID del artículo no esté vacío antes de intentar eliminar
                 if (id.isNotEmpty()) {
                     DataProvider.articuloDAO.eliminarArticulo(
                         idArticulo = id,
                         onSuccess = {
                             Toast.makeText(requireContext(), "Artículo eliminado correctamente", Toast.LENGTH_SHORT).show()
-                            // **** IMPORTANTE: Recargar los datos después de la eliminación exitosa ****
-                            // Esto refrescará DataProvider para que la lista a la que regresas esté actualizada.
                             DataProvider.cargarDatos()
-                            // Volver a la pantalla anterior
                             findNavController().popBackStack()
                         },
                         onFailure = { error ->
                             Toast.makeText(requireContext(), "Error al eliminar el artículo: ${error.message}", Toast.LENGTH_SHORT).show()
-                            Log.e("EliminarArticulo", "Error al eliminar: ${error.message}", error) // Para depuración
+                            Log.e("EliminarArticulo", "Error al eliminar: ${error.message}", error)
                         }
                     )
                 } else {
