@@ -39,6 +39,7 @@ class HomeFragment : Fragment() {
         val txtSeeArticles: TextView = root.findViewById(R.id.see_datail_article)
         val imConfig: ImageView = root.findViewById(R.id.iv_config)
         val llAllArticles: LinearLayout = root.findViewById(R.id.ll_home_section_all_articles)
+        val graphicHome: ImageView = root.findViewById(R.id.graphic_home)
 
         txtCategoria.setOnClickListener {
             findNavController().navigate(R.id.categoriesFragment)
@@ -56,18 +57,17 @@ class HomeFragment : Fragment() {
         val gridView: GridView = root.findViewById(R.id.lista_categorias_home)
         gridView.adapter = adaptador
 
-        // ✅ Mostrar número total de artículos
+        // ✅ Mostrar número total de artículos y asignar gráfica después de cargar datos
         DataProvider.cargarDatos(
             adaptadorCategorias = adaptador,
             alFinalizarEntradas = {
                 root.findViewById<TextView>(R.id.number_article)
                     .text = DataProvider.articulosActuales.toString()
+
+                // ✅ Aquí se asigna la gráfica solo cuando los datos ya están cargados
+                graphicHome.background = CustomCircleDrawable(requireContext(), DataProvider.listaCategorias)
             }
         )
-
-        // ✅ Asignar gráfico circular como fondo
-        val graphicHome: ImageView = root.findViewById(R.id.graphic_home)
-        graphicHome.background = CustomCircleDrawable(requireContext(), DataProvider.listaCategorias)
 
         return root
     }
