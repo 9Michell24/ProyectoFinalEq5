@@ -204,6 +204,7 @@ class All_articlesFragment : Fragment() {
                 categoriasSeleccionadas.addAll(
                     checkboxes.filter { it.isChecked }.map { it.text.toString() }
                 )
+                buscar()
             }
             .setNegativeButton("Cancelar", null)
             .show()

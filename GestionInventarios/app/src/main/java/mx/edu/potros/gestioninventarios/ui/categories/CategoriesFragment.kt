@@ -253,6 +253,13 @@ class CategoriesFragment : Fragment() {
                     return@setOnClickListener
                 }
 
+                DataProvider.listaCategorias.forEach { categoria ->
+                    if (categoria.nombre.equals(nombre)) {
+                        Toast.makeText(context, "ese nombre ya esta en uso", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                }
 
 
                 val categoria = Categoria(DataProvider.listaCategorias[pos].idCategoria, nombre, colorSeleccionado[0])

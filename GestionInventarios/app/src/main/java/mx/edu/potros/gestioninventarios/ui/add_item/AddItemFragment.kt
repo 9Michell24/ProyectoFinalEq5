@@ -523,6 +523,14 @@ class AddItemFragment : Fragment() {
                     return@setOnClickListener
                 }
 
+                DataProvider.listaCategorias.forEach { categoria ->
+                    if (categoria.nombre.equals(nombre)) {
+                        Toast.makeText(context, "ese nombre ya esta en uso", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                }
+
                 val categoria = Categoria("", nombre, colorSeleccionado[0])
 
                 Log.d("Usuario" , DataProvider.usuarioId)
