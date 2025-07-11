@@ -2,7 +2,6 @@ package mx.edu.potros.gestioninventarios.ui.detail_article
 
 import android.app.AlertDialog
 import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -81,93 +80,43 @@ class ActivityArticuloDetalle : Fragment() {
         }
 
 
-
-
         btnEditarArt.setOnClickListener {
-
-
-
-            //Validaciones
-
-
-
-
-
-
-            var idCategoria = ""
-
-            for ((e,i) in DataProvider.listaArticulos.withIndex()){
-                if(i.categoria.nombre.equals(categoriaNombre)){
-                    idCategoria = i.categoria.idCategoria
-                }
+            val bundle = Bundle().apply {
+                putBoolean("isEditMode", true)
+                putString("idArticulo", id)
+                putString("nombre", nombre)
+                putString("categoria", categoriaNombre)
+                putInt("cantidad", cantidad)
+                putString("descripcion", descripcion)
+                putString("color", colorCategoria)
+                putFloat("costo", costo)
+                putString("imagenUrl", imagenUrl)
             }
-
-            DataProvider.categoriaDAO.obtenerCategoriaPorId(idCategoria,
-                onSuccess = { categoria ->
-                    if (categoria != null) {
-                        val articuloEditado = Articulo(
-                            idArticulo = id,
-                            nombre = "nombre editado",
-                            cantidad = cantidad,
-                            descripcion = descripcion,
-                            costo = costo,
-                            categoria = categoria,
-                            imagenUrl = imagenUrl
-                        )
-
-                        DataProvider.articuloDAO.editarArticulo(articuloEditado,
-                            onSuccess = {
-                                Toast.makeText(requireContext(), "Se edito", Toast.LENGTH_SHORT).show()
-                            },
-                            onFailure = { error ->
-                                // Error al editar
-                            })
-                    } else {
-                        // No se encontró la categoría con ese id
-                    }
-                },
-                onFailure = { error ->
-                    // Error al obtener categoría
-                }
-            )
-
-
-
-
-            // Aquí podrías abrir la pantalla de edición si la tienes implementada
-           // Toast.makeText(requireContext(), "Editar artículo no implementado", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.navigation_add_item, bundle)
         }
-
-
-
 
 
         eraseArticle.setOnClickListener {
-
             mostrarDialogoConfirmacionEliminar {
-
-                DataProvider.articuloDAO.eliminarArticulo(
-                    idArticulo = id,
-                    onSuccess = {
-
-                        Toast.makeText(requireContext(), "Se elimino", Toast.LENGTH_SHORT).show()
-                        findNavController().popBackStack()
-                    },
-                    onFailure = {
-                        Toast.makeText(requireContext(), "No se elimino :c", Toast.LENGTH_SHORT).show()
-                    }
+                if (id.isNotEmpty()) {
+                    DataProvider.articuloDAO.eliminarArticulo(
+                        idArticulo = id,
+                        onSuccess = {
+                            Toast.makeText(requireContext(), "Artículo eliminado correctamente", Toast.LENGTH_SHORT).show()
+                            DataProvider.cargarDatos()
+                            findNavController().popBackStack()
+                        },
+                        onFailure = { error ->
+                            Toast.makeText(requireContext(), "Error al eliminar el artículo: ${error.message}", Toast.LENGTH_SHORT).show()
+                            Log.e("EliminarArticulo", "Error al eliminar: ${error.message}", error)
+                        }
                     )
-
+                } else {
+                    Toast.makeText(requireContext(), "No se pudo eliminar: ID del artículo no válido.", Toast.LENGTH_SHORT).show()
+                }
             }
-
         }
-
-
-
-
-
     }
-
 
 
     private fun mostrarDialogoConfirmacionEliminar(onConfirmar: () -> Unit) {
@@ -183,5 +132,4 @@ class ActivityArticuloDetalle : Fragment() {
             }
             .show()
     }
-
 }

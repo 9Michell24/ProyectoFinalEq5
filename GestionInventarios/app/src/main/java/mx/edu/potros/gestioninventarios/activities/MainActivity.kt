@@ -1,5 +1,6 @@
 package mx.edu.potros.gestioninventarios.activities
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -40,18 +41,32 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
 
-        //Codigo para ocultar la barra en ciertas pantallas
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
+
+
+
+        val rootView = findViewById<View>(android.R.id.content)
+
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
+
+            val screenHeight = rootView.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+
+            val isKeyboardOpen = keypadHeight > screenHeight * 0.15
+
+            val currentDestinationId = navController.currentDestination?.id
+            val ocultarPorPantalla = currentDestinationId in listOf(
                 R.id.detailProduct,
                 R.id.newArticulo,
-                    R.id.configFragment,
-                R.id.newCategories -> {
-                    binding.navView.visibility = View.GONE
-                }
-                else -> {
-                    binding.navView.visibility = View.VISIBLE
-                }
+                R.id.configFragment,
+                R.id.newCategories
+            )
+
+            if (isKeyboardOpen || ocultarPorPantalla) {
+                binding.navView.visibility = View.GONE
+            } else {
+                binding.navView.visibility = View.VISIBLE
             }
         }
 

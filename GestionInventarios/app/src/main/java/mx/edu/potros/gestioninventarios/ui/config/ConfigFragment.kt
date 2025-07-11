@@ -19,20 +19,18 @@ import mx.edu.potros.gestioninventarios.DAO.SubirImagenDAOCloudinary
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.activities.ContraseniaActivity1
 import mx.edu.potros.gestioninventarios.activities.LoginActivity
-import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider // Importar DataProvider
-import mx.edu.potros.gestioninventarios.objetoNegocio.Usuario // Asegúrate de importar tu clase Usuario
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.Usuario
 import java.util.*
 
 class ConfigFragment : Fragment() {
 
+    lateinit var nombreUsuario: EditText
+    lateinit var fechaNacimiento: EditText
+    lateinit var spinnerConfig: Spinner
+    lateinit var btnGuardar: Button
 
-    lateinit var nombreUsuario : EditText
-    lateinit var fechaNacimiento : EditText
-    lateinit var spinnerConfig : Spinner
-    lateinit var btnGuardar : Button
-
-    var editable : Boolean = false
-
+    var editable: Boolean = false
 
     companion object {
         fun newInstance() = ConfigFragment()
@@ -43,6 +41,7 @@ class ConfigFragment : Fragment() {
     private var imagenSeleccionadaUri: Uri? = null
     private lateinit var profileIcon: ImageView
     private var currentImageUrl: String? = null
+    private var imagenRecienSeleccionada = false  // 👈 Nueva bandera
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,9 +69,7 @@ class ConfigFragment : Fragment() {
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
-
         isEditable(editable)
-
 
         val adapter = ArrayAdapter.createFromResource(
             requireContext(),
@@ -81,8 +78,6 @@ class ConfigFragment : Fragment() {
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerConfig.adapter = adapter
-
-
 
         fechaNacimiento.setOnClickListener {
             val partesFecha = fechaNacimiento.text.toString().split("/")
@@ -94,22 +89,16 @@ class ConfigFragment : Fragment() {
                 val fechaFormateada = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
 
                 val edad = calcularEdad(fechaFormateada)
-                if (edad < 13) {
-                    Toast.makeText(requireContext(), "Debes tener al menos 13 años", Toast.LENGTH_SHORT).show()
-                } else if (edad > 99) {
-                    Toast.makeText(requireContext(), "La edad máxima permitida es 99 años", Toast.LENGTH_SHORT).show()
-                } else {
-                    fechaNacimiento.setText(fechaFormateada)
+                when {
+                    edad < 13 -> Toast.makeText(requireContext(), "Debes tener al menos 13 años", Toast.LENGTH_SHORT).show()
+                    edad > 99 -> Toast.makeText(requireContext(), "La edad máxima permitida es 99 años", Toast.LENGTH_SHORT).show()
+                    else -> fechaNacimiento.setText(fechaFormateada)
                 }
             }, anio, mes, dia)
 
             datePicker.datePicker.maxDate = Calendar.getInstance().timeInMillis
             datePicker.show()
         }
-
-        // Ya no necesitas obtener el UID aquí directamente para pasar a Firestore
-        // DataProvider lo manejará.
-        // val uid = FirebaseAuth.getInstance().currentUser?.uid
 
         DataProvider.obtenerDatosUsuario(
             onSuccess = { usuario ->
@@ -123,7 +112,7 @@ class ConfigFragment : Fragment() {
                         spinnerConfig.setSelection(index)
                     }
 
-                    if (!currentImageUrl.isNullOrBlank()) {
+                    if (!currentImageUrl.isNullOrBlank() && !imagenRecienSeleccionada) {
                         Glide.with(this)
                             .load(currentImageUrl)
                             .placeholder(R.drawable.profilepic)
@@ -140,109 +129,73 @@ class ConfigFragment : Fragment() {
 
         btnGuardar.setOnClickListener {
 
-            if(editable == false){
+            if (!editable) {
                 isEditable(true)
-            }
+            } else {
 
-            else {
+                val nombre = nombreUsuario.text.toString().trim()
+                val fecha = fechaNacimiento.text.toString().trim()
+                val genero = spinnerConfig.selectedItem.toString()
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                val email = FirebaseAuth.getInstance().currentUser?.email ?: ""
 
-                if (editable) {
-
-                    val nombre = nombreUsuario.text.toString().trim()
-                    val fecha = fechaNacimiento.text.toString().trim()
-                    val genero = spinnerConfig.selectedItem.toString()
-                    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                    val email = FirebaseAuth.getInstance().currentUser?.email ?: ""
-
-                    if (nombre.isEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "El nombre no puede estar vacío",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
-                    }
-
-                    if (fecha.isEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Debes seleccionar una fecha válida",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
-                    }
-
-                    val edad = calcularEdad(fecha)
-                    if (edad < 13 || edad > 99) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Edad fuera de rango permitido (13 - 99 años)",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
-                    }
-
-                    fun guardarDatos(url: String? = null) {
-                        val usuarioActualizado = Usuario(
-                            idUsuario = uid,
-                            nombre = nombre,
-                            correo = email,
-                            nacimiento = fecha,
-                            genero = genero,
-                            contra = null, // ¡Pasamos null porque ahora es nullable!
-                            direccion_foto = url ?: currentImageUrl,
-                            // Dejamos las listas con sus valores predeterminados (arrayListOf())
-                            // Si tu UsuarioDAO.editarUsuario usa .set(usuario), esto reemplazará
-                            // el documento completo en Firestore. Si necesitas actualizar solo campos específicos
-                            // sin afectar las listas existentes, tu DAO debería usar update() en lugar de set().
-                            // Pero para este error en particular, al hacer 'contra' nullable, ya se soluciona.
-                            listaCategoria = arrayListOf(),
-                            ListaArticulo = arrayListOf(),
-                            listaEntradasSalidas = arrayListOf()
-                        )
-
-                        DataProvider.editarDatosUsuario(
-                            usuarioActualizado,
-                            onSuccess = {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Datos actualizados correctamente",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            },
-                            onFailure = { e ->
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Error al actualizar datos: ${e.message}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        )
-                    }
-
-                    val uri = imagenSeleccionadaUri
-                    if (uri != null) {
-                        SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
-                            if (url != null) {
-                                guardarDatos(url)
-                            } else {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Error al subir imagen",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    } else {
-                        guardarDatos()
-                        editable = false
-                        isEditable(editable)
-                    }
-
-                } else {
-
+                if (nombre.isEmpty()) {
+                    Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
 
+                if (fecha.isEmpty()) {
+                    Toast.makeText(requireContext(), "Debes seleccionar una fecha válida", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val edad = calcularEdad(fecha)
+                if (edad < 13 || edad > 99) {
+                    Toast.makeText(requireContext(), "Edad fuera de rango permitido (13 - 99 años)", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                fun guardarDatos(url: String? = null) {
+                    val usuarioActualizado = Usuario(
+                        idUsuario = uid,
+                        nombre = nombre,
+                        correo = email,
+                        nacimiento = fecha,
+                        genero = genero,
+                        contra = null,
+                        direccion_foto = url ?: currentImageUrl,
+                        listaCategoria = arrayListOf(),
+                        ListaArticulo = arrayListOf(),
+                        listaEntradasSalidas = arrayListOf()
+                    )
+
+                    DataProvider.editarDatosUsuario(
+                        usuarioActualizado,
+                        onSuccess = {
+                            Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
+                            imagenRecienSeleccionada = false  // 👈 Resetear bandera después de guardar
+                        },
+                        onFailure = { e ->
+                            Toast.makeText(requireContext(), "Error al actualizar datos: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+
+                val uri = imagenSeleccionadaUri
+                if (uri != null) {
+                    SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
+                        if (url != null) {
+                            guardarDatos(url)
+                        } else {
+                            Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    guardarDatos()
+                }
+
+                editable = false
+                isEditable(editable)
             }
         }
 
@@ -255,9 +208,7 @@ class ConfigFragment : Fragment() {
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
             DataProvider.limpiarDatos()
-
         }
 
         textClick.setOnClickListener {
@@ -270,6 +221,7 @@ class ConfigFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == AppCompatActivity.RESULT_OK && data?.data != null) {
             imagenSeleccionadaUri = data.data
+            imagenRecienSeleccionada = true  // 👈 Marcamos que ya seleccionó una imagen
             profileIcon.setImageURI(imagenSeleccionadaUri)
         }
     }
@@ -292,37 +244,18 @@ class ConfigFragment : Fragment() {
         }
     }
 
-
-    private fun isEditable(accion : Boolean){
-
-        if(accion){
+    private fun isEditable(accion: Boolean) {
+        if (accion) {
             spinnerConfig.isEnabled = true
             nombreUsuario.isEnabled = true
             fechaNacimiento.isEnabled = true
             editable = true
-            btnGuardar.setText("Guardar")
-
-        }
-
-        else{
+            btnGuardar.text = "Guardar"
+        } else {
             spinnerConfig.isEnabled = false
             nombreUsuario.isEnabled = false
             fechaNacimiento.isEnabled = false
-            btnGuardar.setText("Actualizar Datos")
-
+            btnGuardar.text = "Actualizar Datos"
         }
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
 }
