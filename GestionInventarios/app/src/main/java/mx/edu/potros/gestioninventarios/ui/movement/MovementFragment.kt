@@ -2,6 +2,7 @@ package mx.edu.potros.gestioninventarios.ui.movement
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -117,4 +118,82 @@ class MovementFragment : Fragment() {
             findNavController().popBackStack()
         }
     }
+<<<<<<< Updated upstream
+=======
+
+
+
+    fun guardarEntradaSalida(){
+
+        var articuloEntraSal = Articulo()
+        val partes = articulo.split(" - ")
+        val nombre = partes[0]
+        val categoria = partes[1]
+        var position = 0
+
+        for ((i,e) in DataProvider.listaArticulos.withIndex()){
+            if(e.nombre.equals(nombre) && e.categoria.nombre.equals(categoria)){
+                articuloEntraSal = e
+                position = i
+
+            }
+        }
+
+        var disponibilidad = 0
+        for (e in DataProvider.listaEntradasSalidas){
+            if (e.articulo.idArticulo.equals(articuloEntraSal.idArticulo)){
+                if (e.isEntrada){
+                    disponibilidad += e.cantidad
+                }
+                else{
+                    disponibilidad -= e.cantidad
+                }
+            }
+        }
+
+Log.d("dispo" ,disponibilidad.toString())
+        if(entrada == false ) {
+            if ((disponibilidad - cantidad) < 0) {
+                Toast.makeText(requireContext(), "Stock insuficiente", Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+
+        val entraSal = EntradasSalidas("", articuloEntraSal, cantidad, fecha, motivo, entrada)
+        DataProvider.entradasSalidasDAO.guardarEntraSal(entraSal,
+            onSuccess = {
+                Toast.makeText(requireContext(), "Se guardo", Toast.LENGTH_SHORT).show()
+
+                DataProvider.cargarDatos {
+                    var contador = 0
+                    for (e in DataProvider.listaEntradasSalidas) {
+                        if (e.articulo.categoria.nombre.equals(articuloEntraSal.categoria.nombre)) {
+                            if(e.isEntrada){
+                                contador += e.cantidad
+                            }
+                            else{
+                                contador -= e.cantidad
+                            }
+                        }
+                    }
+
+                    val bundle = Bundle().apply {
+                        putInt("position", position) // Esto es la posición de la categoría en la lista
+                        putInt("totalArticles", contador) // Esto es el total de artículos en esa categoría
+                    }
+
+                    findNavController().navigate(R.id.categoriesFragment, bundle)
+                }
+
+            },
+            onFailure = {
+                Toast.makeText(requireContext(), "Se guardo", Toast.LENGTH_SHORT).show()
+            })
+
+
+
+    }
+
+
+>>>>>>> Stashed changes
 }

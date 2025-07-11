@@ -17,6 +17,8 @@ import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.articulosActuales
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradasSalidas
 
 class All_articlesFragment : Fragment() {
 
@@ -204,6 +206,7 @@ class All_articlesFragment : Fragment() {
                 categoriasSeleccionadas.addAll(
                     checkboxes.filter { it.isChecked }.map { it.text.toString() }
                 )
+                buscar()
             }
             .setNegativeButton("Cancelar", null)
             .show()
@@ -248,12 +251,29 @@ class All_articlesFragment : Fragment() {
             val tv_category: TextView = vista.findViewById(R.id.title_category_list_all_articles)
             val iv_imagen: ImageView = vista.findViewById(R.id.imagen_list_all_articles)
 
-            val contador = articulo.cantidad
+
+            var disponibilidad = 0
+            var listaCategoriasStrings = mutableListOf<String>()
+
+            for(e in DataProvider.listaCategorias){
+                listaCategoriasStrings.add(e.nombre)
+            }
+
+            for (e in DataProvider.listaEntradasSalidas) {
+                if(listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                    if (e.isEntrada) {
+                        disponibilidad += e.cantidad
+                    } else {
+                        disponibilidad -= e.cantidad
+                    }
+                }
+            }
+
 
             // Setear textos
             tv_category.setTextColor(Color.parseColor(articulo.categoria.color))
             tv_title.text = articulo.nombre
-            tv_number.text = contador.toString()
+            tv_number.text = disponibilidad.toString()
             tv_category.text = articulo.categoria.nombre
 
             // Cargar imagen con Glide
@@ -267,12 +287,14 @@ class All_articlesFragment : Fragment() {
                 iv_imagen.setImageResource(R.drawable.profileicon)
             }
 
+
+
             // Click para detalle
             vista.setOnClickListener {
                 val bundle = Bundle().apply {
                     putString("nombre", articulo.nombre)
                     putString("categoria", articulo.categoria.nombre)
-                    putInt("cantidad", articulo.cantidad)
+                    putInt("cantidad", disponibilidad)
                     putString("descripcion", articulo.descripcion)
                     putString("color", articulo.categoria.color)
                     putString("imagenUrl", articulo.imagenUrl)

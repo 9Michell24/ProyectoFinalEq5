@@ -103,6 +103,25 @@ class HomeFragment : Fragment() {
         return root
     }
 
+<<<<<<< Updated upstream
+=======
+    override fun onResume() {
+        super.onResume()
+
+        DataProvider.cargarDatos(
+            adaptadorCategorias = adaptador, // Pasa el adaptador para que DataProvider lo notifique
+            alFinalizarEntradas = {
+                // Esto se ejecuta cuando DataProvider.cargarDatos() ha terminado
+                // Es crucial para actualizar la UI con los nuevos datos
+                numberArticleTextView.text = DataProvider.articulosActuales.toString()
+                graphicHome.background = CustomCircleDrawable(requireContext(), DataProvider.listaCategorias)
+                adaptador?.notifyDataSetChanged() // Asegúrate de que el GridView se refresque
+            }
+        )
+    }
+
+
+>>>>>>> Stashed changes
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -228,6 +247,7 @@ class HomeFragment : Fragment() {
 
             var contador : Int = 0
 
+<<<<<<< Updated upstream
             for (e in DataProvider.listaEntradasSalidas){
                 if(e.articulo.categoria.nombre.equals(categoria.nombre)){
                     if(e.isEntrada){
@@ -238,6 +258,17 @@ class HomeFragment : Fragment() {
                     }
 
                     }
+=======
+            var contador = 0
+            for (e in DataProvider.listaEntradasSalidas) {
+                if(e.articulo.categoria.nombre.equals(categoria.nombre)) {
+                    if (e.isEntrada) {
+                        contador += e.cantidad
+                    } else {
+                        contador -= e.cantidad
+                    }
+                }
+>>>>>>> Stashed changes
             }
 
 

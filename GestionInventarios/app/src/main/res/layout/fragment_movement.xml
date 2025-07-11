@@ -89,11 +89,19 @@
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="match_parent"
+<<<<<<< Updated upstream
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
             android:hint=" Seleccionar artículo"
             android:entries="@array/opciones_spinner"
             android:background="@color/campos_texto"/>
+=======
+            android:layout_height="wrap_content"
+            android:hint="Busca un artículo"
+            android:inputType="text"
+            android:padding="16dp"
+            android:background="@color/campos_texto" />
+>>>>>>> Stashed changes
 
     </LinearLayout>
 
