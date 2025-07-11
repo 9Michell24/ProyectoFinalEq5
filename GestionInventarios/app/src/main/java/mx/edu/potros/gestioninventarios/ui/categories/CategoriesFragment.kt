@@ -190,11 +190,6 @@ class CategoriesFragment : Fragment() {
     }
 
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> main
     private fun mostrarDialogoAgregarCategoria(pos : Int) {
         val context = requireContext()
 
@@ -258,15 +253,13 @@ class CategoriesFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-<<<<<<< HEAD
                 DataProvider.listaCategorias.forEach { categoria ->
                     if (categoria.nombre.equals(nombre)) {
-                        Toast.makeText(context, "Ese nombre ya existe", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "ese nombre ya esta en uso", Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
+
                 }
-=======
->>>>>>> main
 
 
                 val categoria = Categoria(DataProvider.listaCategorias[pos].idCategoria, nombre, colorSeleccionado[0])
@@ -337,10 +330,6 @@ class CategoriesFragment : Fragment() {
     }
 
 
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> main
 
 
 

@@ -19,6 +19,9 @@ import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentReportBinding
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.articulosActuales
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaCategorias
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradasSalidas
 import mx.edu.potros.gestioninventarios.utilities.CustomCircleDrawable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,12 +38,9 @@ class ReportFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val reportViewModel =
-            ViewModelProvider(this).get(ReportViewModel::class.java)
-
+        ViewModelProvider(this).get(ReportViewModel::class.java)
         _binding = FragmentReportBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -72,13 +72,9 @@ class ReportFragment : Fragment() {
         dateRangePicker.addOnPositiveButtonClickListener { selection ->
             val startDate = selection.first
             val endDate = selection.second
-
             if (startDate != null && endDate != null) {
                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                val start = sdf.format(Date(startDate))
-                val end = sdf.format(Date(endDate))
-
-                tvDatesText.text = "Desde: $start hasta $end"
+                tvDatesText.text = "Desde: ${sdf.format(Date(startDate))} hasta ${sdf.format(Date(endDate))}"
                 tvDatesText.visibility = View.VISIBLE
             }
         }
@@ -91,10 +87,22 @@ class ReportFragment : Fragment() {
             tvDatesText.visibility = View.INVISIBLE
         }
 
-        // calcular total de artículos actuales
         var cantidad = 0
-        for (e in DataProvider.listaEntradasSalidas) {
-            cantidad += if (e.isEntrada) e.cantidad else -e.cantidad
+        var listaCategoriasStrings = mutableListOf<String>()
+
+        for(e in listaCategorias){
+            listaCategoriasStrings.add(e.nombre)
+        }
+
+        for (e in listaEntradasSalidas) {
+            if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                if (e.isEntrada) {
+                    cantidad += e.cantidad
+                } else {
+                    cantidad -= e.cantidad
+                }
+            }
+
         }
 
         view.findViewById<TextView>(R.id.tv_all_articles_report).text = cantidad.toString()
@@ -107,7 +115,6 @@ class ReportFragment : Fragment() {
         val gridView: GridView = view.findViewById(R.id.list_all_movements)
         gridView.adapter = adaptador
 
-        // ✅ Aquí asignamos la gráfica circular
         graphicHome.background = CustomCircleDrawable(requireContext(), DataProvider.listaCategorias)
     }
 
@@ -138,11 +145,7 @@ class ReportFragment : Fragment() {
 
             for (e in DataProvider.listaEntradasSalidas) {
                 if (e.articulo.categoria.nombre == categoria.nombre) {
-                    if (e.isEntrada) {
-                        up += e.cantidad
-                    } else {
-                        down += e.cantidad
-                    }
+                    if (e.isEntrada) up += e.cantidad else down += e.cantidad
                 }
             }
 
@@ -165,6 +168,19 @@ class ReportFragment : Fragment() {
             fondoUp.background = drawableUp
             fondoDown.background = drawableDown
 
+            // 🚀 Calcula pesos para las barras proporcionales
+            val total = up + down
+            val upWeight = if (total > 0) up.toFloat() / total else 0f
+            val downWeight = if (total > 0) down.toFloat() / total else 0f
+
+            val paramsUp = fondoUp.layoutParams as LinearLayout.LayoutParams
+            paramsUp.weight = upWeight
+            fondoUp.layoutParams = paramsUp
+
+            val paramsDown = fondoDown.layoutParams as LinearLayout.LayoutParams
+            paramsDown.weight = downWeight
+            fondoDown.layoutParams = paramsDown
+
             vista.setOnClickListener {
                 Toast.makeText(context, "No implementado aún", Toast.LENGTH_SHORT).show()
             }
@@ -173,6 +189,5 @@ class ReportFragment : Fragment() {
         }
     }
 }
-
 
 
