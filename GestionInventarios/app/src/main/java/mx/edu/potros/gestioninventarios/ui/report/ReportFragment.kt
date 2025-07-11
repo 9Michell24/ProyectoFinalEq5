@@ -19,6 +19,9 @@ import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentReportBinding
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.articulosActuales
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaCategorias
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradasSalidas
 import mx.edu.potros.gestioninventarios.utilities.CustomCircleDrawable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -85,8 +88,21 @@ class ReportFragment : Fragment() {
         }
 
         var cantidad = 0
-        for (e in DataProvider.listaEntradasSalidas) {
-            cantidad += if (e.isEntrada) e.cantidad else -e.cantidad
+        var listaCategoriasStrings = mutableListOf<String>()
+
+        for(e in listaCategorias){
+            listaCategoriasStrings.add(e.nombre)
+        }
+
+        for (e in listaEntradasSalidas) {
+            if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                if (e.isEntrada) {
+                    cantidad += e.cantidad
+                } else {
+                    cantidad -= e.cantidad
+                }
+            }
+
         }
 
         view.findViewById<TextView>(R.id.tv_all_articles_report).text = cantidad.toString()
