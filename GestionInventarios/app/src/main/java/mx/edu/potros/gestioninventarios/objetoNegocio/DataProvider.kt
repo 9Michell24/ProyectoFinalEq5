@@ -65,13 +65,27 @@ object DataProvider {
                 Log.d("SIze entraSal", listaEntradasSalidas.size.toString())
 
                 articulosActuales = 0
+                var listaCategoriasStrings = mutableListOf<String>()
+
+                for(e in listaCategorias){
+                    listaCategoriasStrings.add(e.nombre)
+                }
+
                 for (e in listaEntradasSalidas) {
                     if (e.isEntrada) {
                         articulosActuales += e.cantidad
                     } else {
                         articulosActuales -= e.cantidad
+                        if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                            if (e.isEntrada) {
+                                articulosActuales += e.cantidad
+                            } else {
+                                articulosActuales -= e.cantidad
+                            }
+                        }
                     }
                 }
+                
                 alFinalizarEntradas?.invoke()
             },
             onFailure = { error ->
