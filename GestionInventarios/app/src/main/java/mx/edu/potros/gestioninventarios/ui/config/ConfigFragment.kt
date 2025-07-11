@@ -30,7 +30,7 @@ class ConfigFragment : Fragment() {
     lateinit var spinnerConfig: Spinner
     lateinit var btnGuardar: Button
 
-    var editable: Boolean = false
+    private var editable: Boolean = false
 
     companion object {
         fun newInstance() = ConfigFragment()
@@ -41,7 +41,6 @@ class ConfigFragment : Fragment() {
     private var imagenSeleccionadaUri: Uri? = null
     private lateinit var profileIcon: ImageView
     private var currentImageUrl: String? = null
-    private var imagenRecienSeleccionada = false  // 👈 Nueva bandera
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -89,10 +88,12 @@ class ConfigFragment : Fragment() {
                 val fechaFormateada = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
 
                 val edad = calcularEdad(fechaFormateada)
-                when {
-                    edad < 13 -> Toast.makeText(requireContext(), "Debes tener al menos 13 años", Toast.LENGTH_SHORT).show()
-                    edad > 99 -> Toast.makeText(requireContext(), "La edad máxima permitida es 99 años", Toast.LENGTH_SHORT).show()
-                    else -> fechaNacimiento.setText(fechaFormateada)
+                if (edad < 13) {
+                    Toast.makeText(requireContext(), "Debes tener al menos 13 años", Toast.LENGTH_SHORT).show()
+                } else if (edad > 99) {
+                    Toast.makeText(requireContext(), "La edad máxima permitida es 99 años", Toast.LENGTH_SHORT).show()
+                } else {
+                    fechaNacimiento.setText(fechaFormateada)
                 }
             }, anio, mes, dia)
 
@@ -100,6 +101,7 @@ class ConfigFragment : Fragment() {
             datePicker.show()
         }
 
+        // Carga datos del usuario desde Firestore
         DataProvider.obtenerDatosUsuario(
             onSuccess = { usuario ->
                 if (usuario != null) {
@@ -112,7 +114,8 @@ class ConfigFragment : Fragment() {
                         spinnerConfig.setSelection(index)
                     }
 
-                    if (!currentImageUrl.isNullOrBlank() && !imagenRecienSeleccionada) {
+                    // Solo carga imagen desde Firestore si el usuario no seleccionó una manualmente
+                    if (!currentImageUrl.isNullOrBlank() && imagenSeleccionadaUri == null) {
                         Glide.with(this)
                             .load(currentImageUrl)
                             .placeholder(R.drawable.profilepic)
@@ -128,11 +131,9 @@ class ConfigFragment : Fragment() {
         )
 
         btnGuardar.setOnClickListener {
-
             if (!editable) {
                 isEditable(true)
             } else {
-
                 val nombre = nombreUsuario.text.toString().trim()
                 val fecha = fechaNacimiento.text.toString().trim()
                 val genero = spinnerConfig.selectedItem.toString()
@@ -173,7 +174,6 @@ class ConfigFragment : Fragment() {
                         usuarioActualizado,
                         onSuccess = {
                             Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
-                            imagenRecienSeleccionada = false  // 👈 Resetear bandera después de guardar
                         },
                         onFailure = { e ->
                             Toast.makeText(requireContext(), "Error al actualizar datos: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -185,6 +185,7 @@ class ConfigFragment : Fragment() {
                 if (uri != null) {
                     SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
                         if (url != null) {
+                            currentImageUrl = url
                             guardarDatos(url)
                         } else {
                             Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
@@ -221,8 +222,10 @@ class ConfigFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == AppCompatActivity.RESULT_OK && data?.data != null) {
             imagenSeleccionadaUri = data.data
-            imagenRecienSeleccionada = true  // 👈 Marcamos que ya seleccionó una imagen
-            profileIcon.setImageURI(imagenSeleccionadaUri)
+            Glide.with(this)
+                .load(imagenSeleccionadaUri)
+                .placeholder(R.drawable.profilepic)
+                .into(profileIcon)
         }
     }
 
@@ -250,12 +253,12 @@ class ConfigFragment : Fragment() {
             nombreUsuario.isEnabled = true
             fechaNacimiento.isEnabled = true
             editable = true
-            btnGuardar.text = "Guardar"
+            btnGuardar.setText("Guardar")
         } else {
             spinnerConfig.isEnabled = false
             nombreUsuario.isEnabled = false
             fechaNacimiento.isEnabled = false
-            btnGuardar.text = "Actualizar Datos"
+            btnGuardar.setText("Actualizar Datos")
         }
     }
 }
