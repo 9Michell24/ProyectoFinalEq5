@@ -16,6 +16,8 @@ import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.databinding.FragmentHomeBinding
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.articulosActuales
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradasSalidas
 import mx.edu.potros.gestioninventarios.utilities.CustomCircleDrawable
 
 class HomeFragment : Fragment() {
@@ -121,11 +123,13 @@ class HomeFragment : Fragment() {
             val tv_number: TextView = vista.findViewById(R.id.tv_category_number_home)
             val fondo: LinearLayout = vista.findViewById(R.id.fondo_lista_categorias_home)
 
+
             var contador = 0
-            // Suma la cantidad de artículos en cada categoría
-            for (articulo in DataProvider.listaArticulos) {
-                if (articulo.categoria.nombre == categoria.nombre) {
-                    contador += articulo.cantidad // Suma directamente la cantidad actual del artículo
+            for (e in DataProvider.listaEntradasSalidas) {
+                if (e.isEntrada) {
+                    articulosActuales += e.cantidad
+                } else {
+                    articulosActuales -= e.cantidad
                 }
             }
 

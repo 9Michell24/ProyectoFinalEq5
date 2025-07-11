@@ -79,21 +79,14 @@
         android:layout_marginHorizontal="25dp"
         android:background="@color/campos_texto">
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="2dp"
-            android:src="@drawable/label" />
-
-        <Spinner
-            android:id="@+id/spinner"
+        <AutoCompleteTextView
+            android:id="@+id/dropdownBusqueda"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:hint=" Seleccionar artículo"
-            android:entries="@array/opciones_spinner"
-            android:background="@color/campos_texto"/>
+            android:layout_height="wrap_content"
+            android:hint="Selecciona una opción"
+            android:inputType="text"
+            android:padding="16dp"
+            android:background="@color/campos_texto" />
 
     </LinearLayout>
 
