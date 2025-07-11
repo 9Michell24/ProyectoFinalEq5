@@ -17,6 +17,7 @@ import mx.edu.potros.gestioninventarios.databinding.FragmentHomeBinding
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.articulosActuales
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaCategorias
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradasSalidas
 import mx.edu.potros.gestioninventarios.utilities.CustomCircleDrawable
 
@@ -123,45 +124,58 @@ class HomeFragment : Fragment() {
             val tv_number: TextView = vista.findViewById(R.id.tv_category_number_home)
             val fondo: LinearLayout = vista.findViewById(R.id.fondo_lista_categorias_home)
 
+            var listaCategoriasStrings = mutableListOf<String>()
+
+            for (e in DataProvider.listaCategorias) {
+                listaCategoriasStrings.add(e.nombre)
+            }
 
             var contador = 0
             for (e in DataProvider.listaEntradasSalidas) {
-                if (e.isEntrada) {
-                    articulosActuales += e.cantidad
-                } else {
-                    articulosActuales -= e.cantidad
+                if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                    if (e.isEntrada) {
+                        contador += e.cantidad
+                    } else {
+                        contador -= e.cantidad
+                    }
                 }
             }
 
 
-            tv_title.text = categoria.nombre
-            tv_number.text = contador.toString()
+                tv_title.text = categoria.nombre
+                tv_number.text = contador.toString()
 
-            val color = Color.parseColor(categoria.color)
-            val drawable = GradientDrawable().apply {
-                cornerRadius = 40f
-                setColor(color)
-            }
-            fondo.background = drawable
+                val color = Color.parseColor(categoria.color)
+                val drawable = GradientDrawable().apply {
+                    cornerRadius = 40f
+                    setColor(color)
+                }
+                fondo.background = drawable
 
-            vista.setOnClickListener {
-                val bundle = Bundle().apply {
-                    putInt("position", position) // Esto es la posición de la categoría en la lista
-                    putInt("totalArticles", contador) // Esto es el total de artículos en esa categoría
-                    // Si quieres pasar el nombre de la categoría para filtrar, también sería útil:
-                    putString("categoryName", categoria.nombre)
+                vista.setOnClickListener {
+                    val bundle = Bundle().apply {
+                        putInt(
+                            "position",
+                            position
+                        ) // Esto es la posición de la categoría en la lista
+                        putInt(
+                            "totalArticles",
+                            contador
+                        ) // Esto es el total de artículos en esa categoría
+                        // Si quieres pasar el nombre de la categoría para filtrar, también sería útil:
+                        putString("categoryName", categoria.nombre)
+                    }
+
+                    Navigation.findNavController(vista).navigate(R.id.categoriesFragment, bundle)
                 }
 
-                Navigation.findNavController(vista).navigate(R.id.categoriesFragment, bundle)
+                return vista
             }
 
-            return vista
+            fun actualizarLista(nuevaLista: ArrayList<Categoria>) {
+                categorias.clear()
+                categorias.addAll(nuevaLista)
+                notifyDataSetChanged()
+            }
         }
-
-        fun actualizarLista(nuevaLista: ArrayList<Categoria>) {
-            categorias.clear()
-            categorias.addAll(nuevaLista)
-            notifyDataSetChanged()
-        }
-    }
 }

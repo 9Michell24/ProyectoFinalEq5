@@ -72,10 +72,6 @@ object DataProvider {
                 }
 
                 for (e in listaEntradasSalidas) {
-                    if (e.isEntrada) {
-                        articulosActuales += e.cantidad
-                    } else {
-                        articulosActuales -= e.cantidad
                         if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
                             if (e.isEntrada) {
                                 articulosActuales += e.cantidad
@@ -83,7 +79,7 @@ object DataProvider {
                                 articulosActuales -= e.cantidad
                             }
                         }
-                    }
+
                 }
                 
                 alFinalizarEntradas?.invoke()
