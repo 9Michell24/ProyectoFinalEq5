@@ -42,11 +42,15 @@ class CustomCircleDrawable(
         val cantidadPorCategoria = mutableMapOf<Categoria, Int>()
         var totalArticulos = 0f
 
+
+
         for (categoria in categorias) {
             var suma = 0
             for (e in DataProvider.listaEntradasSalidas) {
-                if (e.articulo.categoria.nombre == categoria.nombre) {
-                    if (e.isEntrada) suma += e.cantidad else suma -= e.cantidad
+                if (DataProvider.listaIdArticulos.contains(e.articulo.idArticulo)) {
+                    if (e.articulo.categoria.nombre == categoria.nombre) {
+                        if (e.isEntrada) suma += e.cantidad else suma -= e.cantidad
+                    }
                 }
             }
             if (suma < 0) suma = 0 // no permitir negativos

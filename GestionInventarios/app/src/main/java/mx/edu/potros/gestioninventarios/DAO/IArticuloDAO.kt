@@ -6,7 +6,7 @@ interface IArticuloDAO {
 
     fun guardarArticulo(
         articulo: Articulo,
-        onSuccess: () -> Unit,
+        onSuccess: (Articulo) -> Unit,
         onFailure: (Exception) -> Unit
     )
 

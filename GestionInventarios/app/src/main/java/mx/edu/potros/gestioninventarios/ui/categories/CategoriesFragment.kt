@@ -31,13 +31,19 @@ import androidx.navigation.fragment.findNavController
 import mx.edu.potros.gestioninventarios.R
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
+import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradasSalidas
 import mx.edu.potros.gestioninventarios.objetoNegocio.EntradasSalidas
 import yuku.ambilwarna.AmbilWarnaDialog
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class CategoriesFragment : Fragment() {
 
     lateinit var txtCategoria : TextView
     lateinit var lineCategoria: View
+
+    lateinit var listaEntradas : ArrayList<EntradasSalidas>
 
     var totalArticles : Int? = 0
 
@@ -130,6 +136,8 @@ class CategoriesFragment : Fragment() {
         }
 
 
+        listaEntradas = arguments?.getParcelableArrayList<EntradasSalidas>("listaEntradas") as ArrayList<EntradasSalidas>
+
         var datos: ArrayList<String> = arrayListOf()
 
 
@@ -143,41 +151,101 @@ class CategoriesFragment : Fragment() {
             for (e in DataProvider.listaEntradasSalidas) {
                 if (e.articulo.categoria.nombre.equals(DataProvider.listaCategorias[pos].nombre)) {
                     if (e.isEntrada) {
-                        datos.add("+ " + e.cantidad + " " + e.articulo.nombre)
+                        datos.add("+ " + e.cantidad + " " + e.articulo.nombre + " - " + e.fecha)
                     } else {
-                        datos.add("- " + e.cantidad + " " + e.articulo.nombre)
+                        datos.add("- " + e.cantidad + " " + e.articulo.nombre + " - " + e.fecha)
                     }
                 }
             }
         }
 
-        val adaptador = object :
-            ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, datos) {
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getView(position, convertView, parent)
-                val textView = view.findViewById<TextView>(android.R.id.text1)
+        val adaptador = object : BaseAdapter() {
 
+            val formato = SimpleDateFormat("dd-MM-yyyy:HH-mm", Locale.getDefault())
+
+            val listaOrdenada = listaEntradas.sortedBy {
+                try {
+                    formato.parse(it.fecha)
+                } catch (e: Exception) {
+                    Date(0) // Fecha antigua si no se puede parsear
+                }
+            }
+
+
+            override fun getCount(): Int = listaOrdenada?.size ?: 0
+
+            override fun getItem(position: Int): EntradasSalidas = listaOrdenada?.get(position) ?: EntradasSalidas()
+
+            override fun getItemId(position: Int): Long = position.toLong()
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = convertView ?: LayoutInflater.from(requireContext())
+                    .inflate(android.R.layout.simple_list_item_1, parent, false)
+
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                val entrada = getItem(position)
+
+
+
+                val texto = if (entrada.isEntrada) {
+                    "+ ${entrada.cantidad} ${entrada.articulo.nombre}" + " - " + entrada.fecha
+
+
+                } else {
+                    "- ${entrada.cantidad} ${entrada.articulo.nombre}" + " - " + entrada.fecha
+                }
+
+                textView.text = texto
                 textView.textSize = 22f
                 textView.setTypeface(null, Typeface.BOLD)
 
-                val texto = getItem(position)
-                if (texto != null) {
-                    if (texto.startsWith("+")) {
-                        textView.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.entrada_texto
-                            )
-                        )
-                    } else if (texto.startsWith("-")) {
-                        textView.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.salida_texto
-                            )
-                        )
-                    }
+                val color = if (entrada.isEntrada)
+                    ContextCompat.getColor(requireContext(), R.color.entrada_texto)
+                else
+                    ContextCompat.getColor(requireContext(), R.color.salida_texto)
+
+                textView.setTextColor(color)
+
+                var listaIdArticulos = ArrayList<String>()
+
+                for(e in DataProvider.listaArticulos){
+                    listaIdArticulos.add(e.idArticulo)
                 }
+
+
+                view.setOnClickListener {
+                    if(!listaIdArticulos.contains(entrada.articulo.idArticulo)){
+                        Toast.makeText(requireContext(), "Este articulo fue eliminado", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+
+                    var cantidadFinal = 0
+
+                    for (e in DataProvider.listaEntradasSalidas) {
+                        if (e.articulo.idArticulo.equals(entrada.articulo.idArticulo)) {
+                            if (e.isEntrada) {
+                                cantidadFinal += e.cantidad
+                            } else {
+                                cantidadFinal -= e.cantidad
+                            }
+                        }
+                    }
+
+
+                    val bundle = Bundle().apply {
+                        putString("nombre", entrada.articulo.nombre)
+                        putString("categoria", entrada.articulo.categoria.nombre)
+                        putInt("cantidad", cantidadFinal)
+                        putString("descripcion", entrada.articulo.descripcion)
+                        putString("color", entrada.articulo.categoria.color)
+                        putString("imagenUrl", entrada.articulo.imagenUrl)
+                        putFloat("costo", entrada.articulo.costo)
+                        putString("idArticulo", entrada.articulo.idArticulo)
+                    }
+
+                    findNavController().navigate(R.id.detailProduct, bundle)
+                }
+                    }
 
                 return view
             }

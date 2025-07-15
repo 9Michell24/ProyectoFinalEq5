@@ -103,7 +103,6 @@ class ActivityArticuloDetalle : Fragment() {
                         idArticulo = id,
                         onSuccess = {
                             Toast.makeText(requireContext(), "Artículo eliminado correctamente", Toast.LENGTH_SHORT).show()
-                            DataProvider.cargarDatos()
                             findNavController().popBackStack()
                         },
                         onFailure = { error ->

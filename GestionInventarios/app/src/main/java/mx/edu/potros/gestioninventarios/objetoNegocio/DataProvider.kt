@@ -23,26 +23,39 @@ object DataProvider {
     val usuarioDAO = UsuarioDAO() // Instancia de tu UsuarioDAO aquí
 
     var articulosActuales = 0
+    var listaIdArticulos = ArrayList<String>()
 
     fun cargarDatos(
         adaptadorCategorias: BaseAdapter? = null,
         adaptadorArticulos: BaseAdapter? = null,
         adaptadorEntraSal: BaseAdapter? = null,
         alFinalizarEntradas: (() -> Unit)? = null
-    ){
-
+    ) {
         limpiarDatos()
+
+        var categoriasCargadas = false
+        var articulosCargados = false
+        var entradasSalidasCargadas = false
+
+        fun intentarFinalizar() {
+            if (categoriasCargadas && articulosCargados && entradasSalidasCargadas) {
+                for(e in listaArticulos){
+                    listaIdArticulos.add(e.idArticulo)
+                }
+                // Ya se cargaron los 3
+                alFinalizarEntradas?.invoke()
+            }
+        }
 
         categoriaDAO.obtenerTodosLasCategorias(
             onSuccess = { lista ->
                 listaCategorias.clear()
                 listaCategorias.addAll(lista)
                 adaptadorCategorias?.notifyDataSetChanged()
-                Log.d("SIze cate", listaCategorias.size.toString())
+                categoriasCargadas = true
+                intentarFinalizar()
             },
-            onFailure = { error ->
-                Log.d("Error en obtener todas las categorias", "checa")
-            }
+            onFailure = { Log.d("Error", "Error al cargar categorías") }
         )
 
         articuloDAO.obtenerTodosLosArticulos(
@@ -50,11 +63,10 @@ object DataProvider {
                 listaArticulos.clear()
                 listaArticulos.addAll(lista)
                 adaptadorArticulos?.notifyDataSetChanged()
-                Log.d("SIze arti", listaArticulos.size.toString())
+                articulosCargados = true
+                intentarFinalizar()
             },
-            onFailure = {
-                Log.d("Error en obtener todas los articulos", "checa")
-            }
+            onFailure = { Log.d("Error", "Error al cargar artículos") }
         )
 
         entradasSalidasDAO.obtenerTodosLasEntraSal(
@@ -62,31 +74,23 @@ object DataProvider {
                 listaEntradasSalidas.clear()
                 listaEntradasSalidas.addAll(lista)
                 adaptadorEntraSal?.notifyDataSetChanged()
-                Log.d("SIze entraSal", listaEntradasSalidas.size.toString())
 
                 articulosActuales = 0
-                var listaCategoriasStrings = mutableListOf<String>()
-
-                for(e in listaCategorias){
-                    listaCategoriasStrings.add(e.nombre)
-                }
+                val listaCategoriasStrings = listaCategorias.map { it.nombre }
 
                 for (e in listaEntradasSalidas) {
-                    if(listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
-                        if (e.isEntrada) {
-                            articulosActuales += e.cantidad
-                        } else {
-                            articulosActuales -= e.cantidad
-                        }
+                    if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                        articulosActuales += if (e.isEntrada) e.cantidad else -e.cantidad
                     }
                 }
-                alFinalizarEntradas?.invoke()
+
+                entradasSalidasCargadas = true
+                intentarFinalizar()
             },
-            onFailure = { error ->
-                Log.d("Error en obtener todas las entradasSalidas", "checa")
-            }
+            onFailure = { Log.d("Error", "Error al cargar entradas/salidas") }
         )
     }
+
 
     // Nuevo método en DataProvider para obtener los datos del usuario
     fun obtenerDatosUsuario(

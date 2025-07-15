@@ -18,6 +18,7 @@ import mx.edu.potros.gestioninventarios.objetoNegocio.Articulo
 import mx.edu.potros.gestioninventarios.objetoNegocio.Categoria
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 import mx.edu.potros.gestioninventarios.objetoNegocio.EntradasSalidas
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -109,6 +110,7 @@ class MovementFragment : Fragment() {
 //        }
 
         // Calendario
+        val formatoFecha = SimpleDateFormat("dd-MM-yyyy:HH-mm", Locale.getDefault())
         editTextFecha.setOnClickListener {
             val calendario = Calendar.getInstance()
             val año = calendario.get(Calendar.YEAR)
@@ -116,12 +118,17 @@ class MovementFragment : Fragment() {
             val dia = calendario.get(Calendar.DAY_OF_MONTH)
 
             val datePicker = DatePickerDialog(requireContext(), { _, y, m, d ->
-                 fecha = String.format("%02d/%02d/%04d", d, m + 1, y)
-                editTextFecha.setText(fecha)
+                val seleccion = Calendar.getInstance()
+                seleccion.set(Calendar.YEAR, y)
+                seleccion.set(Calendar.MONTH, m)
+                seleccion.set(Calendar.DAY_OF_MONTH, d)
+
+                val fechaFormateada = formatoFecha.format(seleccion.time)
+                editTextFecha.setText(fechaFormateada)
+                fecha = fechaFormateada
             }, año, mes, dia)
 
             datePicker.datePicker.maxDate = calendario.timeInMillis
-
             datePicker.show()
         }
 
@@ -146,6 +153,12 @@ class MovementFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            if(dropdown.text.equals("")){
+                Toast.makeText(requireContext(), "Seleccione una articulo valido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
             guardarEntradaSalida()
         }
 
@@ -159,9 +172,10 @@ class MovementFragment : Fragment() {
 
         val lista = ArrayList<String>()
 
-        for(e in DataProvider.listaArticulos){
-            lista.add(e.nombre  +" - " + e.categoria.nombre)
+        for (e in DataProvider.listaArticulos) {
+            lista.add("${e.nombre} - ${e.categoria.nombre}")
         }
+
 
 
 
@@ -170,99 +184,124 @@ class MovementFragment : Fragment() {
 
         dropdown.setOnItemClickListener { parent, view, position, id ->
             val seleccion = parent.getItemAtPosition(position) as String
+
             articulo = seleccion
             Toast.makeText(requireContext(), "Seleccionaste: $seleccion", Toast.LENGTH_SHORT).show()
+        }
+
+        dropdown.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val texto = dropdown.text.toString()
+                if (!lista.contains(texto)) {
+                    dropdown.setText("")
+                    Toast.makeText(requireContext(), "Selecciona una opción válida del listado", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
 
 
     }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> main
 
 
 
     fun guardarEntradaSalida(){
 
-        var articuloEntraSal = Articulo()
-        val partes = articulo.split(" - ")
-        val nombre = partes[0]
-        val categoria = partes[1]
-        var position = 0
+        try {
 
-        for ((i,e) in DataProvider.listaArticulos.withIndex()){
-            if(e.nombre.equals(nombre) && e.categoria.nombre.equals(categoria)){
-                articuloEntraSal = e
-                position = i
-
-            }
-        }
-
-<<<<<<< HEAD
-        var disponibilidad = 0
-        for (e in DataProvider.listaEntradasSalidas){
-            if (e.articulo.idArticulo.equals(articuloEntraSal.idArticulo)){
-                if (e.isEntrada){
-                    disponibilidad += e.cantidad
-                }
-                else{
-                    disponibilidad -= e.cantidad
-                }
-            }
-        }
-
-Log.d("dispo" ,disponibilidad.toString())
-        if(entrada == false ) {
-            if ((disponibilidad - cantidad) < 0) {
-                Toast.makeText(requireContext(), "Stock insuficiente", Toast.LENGTH_SHORT).show()
+            if (articulo.equals("")) {
+                Toast.makeText(requireContext(), "Seleccione un articulo", Toast.LENGTH_SHORT).show()
                 return
             }
-        }
-=======
+            else {
 
->>>>>>> main
+                var articuloEntraSal = Articulo()
+                val partes = articulo.split(" - ")
+                val nombre = partes[0]
+                val categoria = partes[1]
+                var position = 0
 
-        val entraSal = EntradasSalidas("", articuloEntraSal, cantidad, fecha, motivo, entrada)
-        DataProvider.entradasSalidasDAO.guardarEntraSal(entraSal,
-            onSuccess = {
-                Toast.makeText(requireContext(), "Se guardo", Toast.LENGTH_SHORT).show()
+                for ((i, e) in DataProvider.listaArticulos.withIndex()) {
+                    if (e.nombre.equals(nombre) && e.categoria.nombre.equals(categoria)) {
+                        articuloEntraSal = e
+                        position = i
 
-                DataProvider.cargarDatos {
-                    var contador = 0
-                    for (e in DataProvider.listaEntradasSalidas) {
-                        if (e.articulo.categoria.nombre.equals(articuloEntraSal.categoria.nombre)) {
-                            if(e.isEntrada){
-                                contador += e.cantidad
-                            }
-                            else{
-                                contador -= e.cantidad
-                            }
-                        }
                     }
-
-                    val bundle = Bundle().apply {
-                        putInt("position", position) // Esto es la posición de la categoría en la lista
-                        putInt("totalArticles", contador) // Esto es el total de artículos en esa categoría
-                    }
-
-                    findNavController().navigate(R.id.categoriesFragment, bundle)
                 }
 
-            },
-            onFailure = {
-                Toast.makeText(requireContext(), "Se guardo", Toast.LENGTH_SHORT).show()
-            })
+                var disponibilidad = 0
+                for (e in DataProvider.listaEntradasSalidas) {
+                    //  Log.d("articulo 1", e.articulo.nombre + " - " + e.articulo.idArticulo)
+                    //  Log.d("articulo 2", articuloEntraSal.idArticulo)
+                    if (e.articulo.idArticulo.equals(articuloEntraSal.idArticulo)) {
+                        if (e.isEntrada) {
+                            disponibilidad += e.cantidad
+                        } else {
+                            disponibilidad -= e.cantidad
+                        }
+                    }
+                }
+
+                Log.d("dispo", disponibilidad.toString())
+                if (entrada == false) {
+                    if ((disponibilidad - cantidad) < 0) {
+                        Toast.makeText(requireContext(), "Stock insuficiente", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                }
 
 
+
+                binding.btnGuardarEntradasSalidas.isEnabled = false
+                val entraSal = EntradasSalidas("", articuloEntraSal, cantidad, fecha, motivo, entrada)
+
+
+
+                DataProvider.entradasSalidasDAO.guardarEntraSal(
+                    entraSal,
+                    onSuccess = {
+                        Toast.makeText(requireContext(), "Se guardo", Toast.LENGTH_SHORT).show()
+
+                        var listaEntradas = ArrayList<EntradasSalidas>()
+
+                        var contador = 0
+                        for (e in DataProvider.listaEntradasSalidas) {
+                            if (e.articulo.categoria.nombre.equals(articuloEntraSal.categoria.nombre)) {
+                                if (e.isEntrada) {
+                                    contador += e.cantidad
+                                } else {
+                                    contador -= e.cantidad
+                                }
+                                listaEntradas.add(e)
+                            }
+                        }
+
+
+                            val bundle = Bundle().apply {
+                                putInt("position", position)
+                                putInt("totalArticles", contador)
+                                putParcelableArrayList("listaEntradas", ArrayList(listaEntradas))
+                            }
+
+                            binding.btnGuardarEntradasSalidas.isEnabled = true
+                            findNavController().navigate(R.id.categoriesFragment, bundle)
+
+
+                    },
+                    onFailure = {
+                        Toast.makeText(requireContext(), "No se guardo", Toast.LENGTH_SHORT).show()
+                        binding.btnGuardarEntradasSalidas.isEnabled = true
+                    })
+
+            }
+        }
+            catch(e : Exception) {
+                e.printStackTrace()
+            }
+        }
 
     }
 
 
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> main
-}
+
+

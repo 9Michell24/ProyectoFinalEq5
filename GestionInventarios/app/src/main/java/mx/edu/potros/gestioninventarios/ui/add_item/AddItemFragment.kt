@@ -68,6 +68,13 @@ class AddItemFragment : Fragment() {
 
         textoCategoria = binding.spinnerCategorAArtCulo
 
+//        binding.nombreArticulo.setText("")
+//        binding.cantidadArticulo.setText("0")
+//        binding.descripciNArticulo.setText("")
+//        binding.costo.setText("")
+//        binding.profileIcon.setImageURI(null)
+
+
         binding.regresar.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -166,7 +173,7 @@ class AddItemFragment : Fragment() {
                 }
             } else {
                 // En modo de adición, el botón siempre guarda el nuevo artículo
-                handleSaveArticle()
+                guardar()
             }
         }
     }
@@ -180,7 +187,7 @@ class AddItemFragment : Fragment() {
         }
     }
 
-    private fun handleSaveArticle() {
+    private fun guardar() {
         val uri = imagenSeleccionadaUri
 
         if (uri == null) {
@@ -188,11 +195,13 @@ class AddItemFragment : Fragment() {
             return
         }
 
+        binding.btnGuardarArt.isEnabled = false
         SubirImagenDAOCloudinary.subirImagen(uri, requireContext()) { url ->
             if (url != null) {
                 guardarArticuloEnFirestore(url)
             } else {
                 Toast.makeText(requireContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                binding.btnGuardarArt.isEnabled = true
             }
         }
     }
@@ -276,6 +285,7 @@ class AddItemFragment : Fragment() {
                     )
                     DataProvider.entradasSalidasDAO.guardarEntraSal(movimiento,
                         onSuccess = {
+                            binding.btnGuardarArt.isEnabled = true
                             Log.d("Movement", "Movimiento de edición registrado correctamente.")
                         },
                         onFailure = { error ->
@@ -310,6 +320,7 @@ class AddItemFragment : Fragment() {
                 isCurrentlyEditable = true
                 isEditable(true)
                 binding.btnGuardarArt.text = "Guardar Cambios"
+                binding.btnGuardarArt.isEnabled = true
             }
         )
     }
@@ -327,51 +338,76 @@ class AddItemFragment : Fragment() {
             return
         }
 
-        val articulo = Articulo(
-            imagenUrl = imagenUrl,
-            nombre = nombre,
-            cantidad = cantidad,
-            categoria = categoria,
-            descripcion = descripcion,
-            costo = costo
-        )
 
-        DataProvider.articuloDAO.guardarArticulo(articulo,
-            onSuccess = {
-                val entrada = EntradasSalidas(
-                    "",
-                    articulo,
-                    cantidad,
-                    SimpleDateFormat("dd-MM-yyyy:HH-mm", Locale.getDefault()).format(Date()),
-                    "Registro",
-                    true
-                )
-                DataProvider.entradasSalidasDAO.guardarEntraSal(entrada,
-                    onSuccess = {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            val bundle = Bundle().apply {
-                                putString("nombre", articulo.nombre)
-                                putString("categoria", articulo.categoria.nombre)
-                                putInt("cantidad", articulo.cantidad)
-                                putString("descripcion", articulo.descripcion)
-                                putString("color", articulo.categoria.color)
-                                putString("imagenUrl", articulo.imagenUrl)
-                                putFloat("costo", articulo.costo)
-                                putString("idArticulo", articulo.idArticulo)
-                            }
-                            findNavController().navigate(R.id.detailProduct, bundle)
-                            DataProvider.cargarDatos()
-                        }, 500)
-                    },
-                    onFailure = { error ->
-                        Log.e("Entrada", "Fallo al guardar entrada de registro: ${error.message}")
-                    })
-                Toast.makeText(requireContext(), "Artículo guardado correctamente", Toast.LENGTH_SHORT).show()
-            },
-            onFailure = { error ->
-                Toast.makeText(requireContext(), "Error al guardar el artículo: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-        )
+        try {
+           // Toast.makeText(context, "Guardando...", Toast.LENGTH_SHORT).show()
+
+            val articulo = Articulo(
+                imagenUrl = imagenUrl,
+                nombre = nombre,
+                cantidad = cantidad,
+                categoria = categoria,
+                descripcion = descripcion,
+                costo = costo
+            )
+
+            DataProvider.articuloDAO.guardarArticulo(
+                articulo,
+                onSuccess = { articuloConId ->
+                    val entrada = EntradasSalidas(
+                        "",
+                        articuloConId,
+                        cantidad,
+                        SimpleDateFormat("dd-MM-yyyy:HH-mm", Locale.getDefault()).format(Date()),
+                        "Registro",
+                        true
+                    )
+                    DataProvider.entradasSalidasDAO.guardarEntraSal(
+                        entrada,
+                        onSuccess = {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                val bundle = Bundle().apply {
+                                    putString("nombre", articulo.nombre)
+                                    putString("categoria", articulo.categoria.nombre)
+                                    putInt("cantidad", articulo.cantidad)
+                                    putString("descripcion", articulo.descripcion)
+                                    putString("color", articulo.categoria.color)
+                                    putString("imagenUrl", articulo.imagenUrl)
+                                    putFloat("costo", articulo.costo)
+                                    putString("idArticulo", articulo.idArticulo)
+                                }
+                                binding.btnGuardarArt.isEnabled = true
+                                findNavController().navigate(R.id.detailProduct, bundle)
+                                DataProvider.cargarDatos()
+                            }, 500)
+                        },
+                        onFailure = { error ->
+                            Log.e(
+                                "Entrada",
+                                "Fallo al guardar entrada de registro: ${error.message}"
+                            )
+                        })
+                    Toast.makeText(
+                        requireContext(),
+                        "Artículo guardado correctamente",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
+                onFailure = { error ->
+                    Toast.makeText(
+                        requireContext(),
+                        "Error al guardar el artículo: ${error.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+        }
+        catch (e : Exception){
+            e.printStackTrace()
+            binding.btnGuardarArt.isEnabled = true
+        }
+
+
     }
 
     // --- Implementación de la función isEditable para controlar los campos ---

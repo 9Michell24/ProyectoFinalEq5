@@ -25,6 +25,7 @@ import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradas
 import mx.edu.potros.gestioninventarios.utilities.CustomCircleDrawable
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ReportFragment : Fragment() {
 
@@ -95,27 +96,39 @@ class ReportFragment : Fragment() {
         }
 
         for (e in listaEntradasSalidas) {
-            if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
-                if (e.isEntrada) {
-                    cantidad += e.cantidad
-                } else {
-                    cantidad -= e.cantidad
+            if(DataProvider.listaIdArticulos.contains(e.articulo.idArticulo)) {
+                if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                    if (e.isEntrada) {
+                        cantidad += e.cantidad
+                    } else {
+                        cantidad -= e.cantidad
+                    }
                 }
             }
 
         }
 
-        view.findViewById<TextView>(R.id.tv_all_articles_report).text = cantidad.toString()
+       // view.findViewById<TextView>(R.id.tv_all_articles_report).text = cantidad.toString()
+        view.findViewById<TextView>(R.id.tv_all_articles_report).text = DataProvider.listaArticulos.size.toString()
 
         tvSeeAllProducts.setOnClickListener {
             findNavController().navigate(R.id.allProdutsFragment)
         }
 
-        adaptador = AdaptadorListaReport(view.context, ArrayList(DataProvider.listaCategorias))
+        var categoriasOrdenadasTamano = ArrayList<Categoria>()
+
+        for(e in DataProvider.listaArticulos){
+            if(!categoriasOrdenadasTamano.contains(e.categoria)){
+                categoriasOrdenadasTamano.add(e.categoria)
+            }
+        }
+
+
+        adaptador = AdaptadorListaReport(view.context, ArrayList(categoriasOrdenadasTamano))
         val gridView: GridView = view.findViewById(R.id.list_all_movements)
         gridView.adapter = adaptador
 
-        graphicHome.background = CustomCircleDrawable(requireContext(), DataProvider.listaCategorias)
+        graphicHome.background = CustomCircleDrawable(requireContext(), categoriasOrdenadasTamano)
     }
 
     private class AdaptadorListaReport(
@@ -143,11 +156,28 @@ class ReportFragment : Fragment() {
             var up = 0
             var down = 0
 
+
+
             for (e in DataProvider.listaEntradasSalidas) {
-                if (e.articulo.categoria.nombre == categoria.nombre) {
-                    if (e.isEntrada) up += e.cantidad else down += e.cantidad
+                if(DataProvider.listaIdArticulos.contains(e.articulo.idArticulo)) {
+                    if(e.articulo.categoria.nombre == categoria.nombre){
+                        if (e.isEntrada) {
+                            up += e.cantidad
+                        }
+                        else {
+                            down += e.cantidad
+                        }
+                    }
                 }
             }
+
+//            for (e in DataProvider.listaEntradasSalidas) {
+//                if(DataProvider.listaIdArticulos.contains(e.articulo.idArticulo)) {
+//                    if (e.articulo.categoria.nombre == categoria.nombre) {
+//                        if (e.isEntrada) up += e.cantidad else down += e.cantidad
+//                    }
+//                }
+//            }
 
             tvTitle.text = categoria.nombre
             tvNumberUp.text = up.toString()
@@ -168,7 +198,6 @@ class ReportFragment : Fragment() {
             fondoUp.background = drawableUp
             fondoDown.background = drawableDown
 
-            // 🚀 Calcula pesos para las barras proporcionales
             val total = up + down
             val upWeight = if (total > 0) up.toFloat() / total else 0f
             val downWeight = if (total > 0) down.toFloat() / total else 0f

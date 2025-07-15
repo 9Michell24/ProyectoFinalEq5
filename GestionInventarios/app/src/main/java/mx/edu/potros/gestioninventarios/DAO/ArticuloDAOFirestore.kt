@@ -15,7 +15,7 @@ class ArticuloDAOFirestore(private val usuarioId: String) : IArticuloDAO {
 
     override fun guardarArticulo(
         articulo: Articulo,
-        onSuccess: () -> Unit,
+        onSuccess: (Articulo) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         val docRef = collection.document()
@@ -23,7 +23,7 @@ class ArticuloDAOFirestore(private val usuarioId: String) : IArticuloDAO {
         val articuloConId = articulo.copy(idArticulo = idGenerado)
 
         docRef.set(articuloConId)
-            .addOnSuccessListener { onSuccess() }
+            .addOnSuccessListener { onSuccess(articuloConId) }
             .addOnFailureListener { e -> onFailure(e) }
     }
 

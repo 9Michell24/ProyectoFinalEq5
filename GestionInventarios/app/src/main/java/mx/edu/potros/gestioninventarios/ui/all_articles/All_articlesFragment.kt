@@ -69,51 +69,29 @@ class All_articlesFragment : Fragment() {
         gridView.adapter = adaptador
 
         DataProvider.cargarDatos(
-            adaptadorArticulos = adaptador
+            adaptadorArticulos = adaptador,
+            alFinalizarEntradas = {
+                adaptador?.notifyDataSetChanged()
+            }
         )
 
-        cargarArticulosFirebase()
     }
 
-    private fun cargarArticulosFirebase() {
-//        val db = FirebaseFirestore.getInstance()
-//        db.collection("articulos").get()
-//            .addOnSuccessListener { result ->
-//                listaArticulos.clear()
-//                for (document in result) {
-//                    val nombre = document.getString("nombre") ?: ""
-//                    val cantidad = (document.getLong("cantidad") ?: 0L).toInt()
-//                    val descripcion = document.getString("descripcion") ?: ""
-//                    val costo = (document.getDouble("costo") ?: 0.0).toFloat()
-//                    val imagenUrl = document.getString("imagenUrl") ?: ""
-//
-//                    val categoriaMap = document.get("categoria") as? Map<String, Any>
-//                    val categoriaNombre = categoriaMap?.get("nombre") as? String ?: ""
-//                    val categoriaColor = categoriaMap?.get("color") as? String ?: "#000000"
-//
-//                    val categoria = Categoria(categoriaNombre, categoriaColor)
-//                    val articulo = Articulo(nombre, cantidad, descripcion, costo, categoria, imagenUrl)
-//                    listaArticulos.add(articulo)
-//                }
-//                adaptador?.notifyDataSetChanged()
-//            }
-//            .addOnFailureListener {
-//                Toast.makeText(requireContext(), "Error cargando artículos", Toast.LENGTH_SHORT).show()
-//            }
 
-//        DataProvider.articuloDAO.obtenerTodosLosArticulos(
-//            onSuccess = { lista ->
-//                listaArticulos = lista
-//                adaptador?.actualizarLista(lista)
-//
-//            },
-//            onFailure = { error ->
-//                Toast.makeText(context, "Error al obtener artículos", Toast.LENGTH_SHORT).show()
-//            }
-//        )
 
+    override fun onResume(){
+        super.onResume()
+
+        DataProvider.cargarDatos(
+            adaptadorArticulos = adaptador,
+            alFinalizarEntradas = {
+                adaptador?.actualizarLista(DataProvider.listaArticulos)
+            }
+
+        )
 
     }
+
 
 
 
@@ -252,15 +230,18 @@ class All_articlesFragment : Fragment() {
             val iv_imagen: ImageView = vista.findViewById(R.id.imagen_list_all_articles)
 
 
-            var disponibilidad = 0
             var listaCategoriasStrings = mutableListOf<String>()
 
-            for(e in DataProvider.listaCategorias){
+
+            for (e in DataProvider.listaCategorias) {
                 listaCategoriasStrings.add(e.nombre)
             }
 
+
+
+            var disponibilidad = 0
             for (e in DataProvider.listaEntradasSalidas) {
-                if(listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                if (e.articulo.idArticulo.equals(articulo.idArticulo)) {
                     if (e.isEntrada) {
                         disponibilidad += e.cantidad
                     } else {
@@ -268,6 +249,7 @@ class All_articlesFragment : Fragment() {
                     }
                 }
             }
+
 
 
             // Setear textos

@@ -39,14 +39,19 @@ class CustomBarDrawable(
         var entradas = 0
         var salidas = 0
 
+
+
+
         for (e in DataProvider.listaEntradasSalidas) {
-            if (e.articulo.categoria.nombre == categoria.nombre) {
-                if (e.isEntrada) entradas += e.cantidad else salidas += e.cantidad
+            if(DataProvider.listaIdArticulos.contains(e.articulo.idArticulo)){
+                if (e.articulo.categoria.nombre == categoria.nombre) {
+                    if (e.isEntrada) entradas += e.cantidad else salidas += e.cantidad
+                }
             }
         }
 
         val total = entradas + salidas
-        if (total == 0) return
+       // if (total == 0) return
 
         val anchoEntradas = (entradas.toFloat() / total) * totalWidth
         val anchoSalidas = (salidas.toFloat() / total) * totalWidth

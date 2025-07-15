@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,13 @@ import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.articulosActuales
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaCategorias
 import mx.edu.potros.gestioninventarios.objetoNegocio.DataProvider.listaEntradasSalidas
+import mx.edu.potros.gestioninventarios.objetoNegocio.EntradasSalidas
 import mx.edu.potros.gestioninventarios.utilities.CustomCircleDrawable
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+var cont = 0
+lateinit var txtAll : TextView
 
 class HomeFragment : Fragment() {
 
@@ -45,13 +52,15 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         val txtCategoria: TextView = root.findViewById(R.id.category_home)
-        val txtSeeArticles: TextView = root.findViewById(R.id.see_datail_article)
         val imConfig: ImageView = root.findViewById(R.id.iv_config)
         val llAllArticles: LinearLayout = root.findViewById(R.id.ll_home_section_all_articles)
 
-        // Asignar a las propiedades de la clase
         graphicHome = root.findViewById(R.id.graphic_home)
         numberArticleTextView = root.findViewById(R.id.number_article)
+
+
+        txtAll = root.findViewById(R.id.number_article)
+
 
         txtCategoria.setOnClickListener {
             findNavController().navigate(R.id.categoriesFragment)
@@ -72,23 +81,17 @@ class HomeFragment : Fragment() {
         DataProvider.cargarDatos(
             adaptadorCategorias = adaptador,
             alFinalizarEntradas = {
-                // Actualiza el texto del número de artículos
-                numberArticleTextView.text = DataProvider.articulosActuales.toString()
-                // Asigna la gráfica solo cuando los datos ya están cargados
                 graphicHome.background = CustomCircleDrawable(requireContext(), DataProvider.listaCategorias)
-                // Asegúrate de que el adaptador de categorías se actualice aquí también
                 adaptador?.notifyDataSetChanged()
+                adaptador?.cargarTotalArticles()
+
             }
         )
 
         return root
     }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> main
+
     override fun onResume() {
         super.onResume()
 
@@ -97,18 +100,15 @@ class HomeFragment : Fragment() {
             alFinalizarEntradas = {
                 // Esto se ejecuta cuando DataProvider.cargarDatos() ha terminado
                 // Es crucial para actualizar la UI con los nuevos datos
-                numberArticleTextView.text = DataProvider.articulosActuales.toString()
+              //  numberArticleTextView.text = DataProvider.articulosActuales.toString()
                 graphicHome.background = CustomCircleDrawable(requireContext(), DataProvider.listaCategorias)
                 adaptador?.notifyDataSetChanged() // Asegúrate de que el GridView se refresque
+                adaptador?.cargarTotalArticles()
             }
         )
     }
 
-<<<<<<< HEAD
 
->>>>>>> Stashed changes
-=======
->>>>>>> main
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -140,45 +140,33 @@ class HomeFragment : Fragment() {
                 listaCategoriasStrings.add(e.nombre)
             }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-            for (e in DataProvider.listaEntradasSalidas){
-                if(e.articulo.categoria.nombre.equals(categoria.nombre)){
-                    if(e.isEntrada){
-                        contador = contador + e.cantidad
-                    }
-                    else{
-                        contador = contador - e.cantidad
-                    }
+            var listaEntradas = ArrayList<EntradasSalidas>()
 
-                    }
-=======
+
             var contador = 0
             for (e in DataProvider.listaEntradasSalidas) {
-                if(e.articulo.categoria.nombre.equals(categoria.nombre)) {
+                if (e.articulo.categoria.nombre.equals(categoria.nombre)) {
                     if (e.isEntrada) {
                         contador += e.cantidad
                     } else {
                         contador -= e.cantidad
                     }
+                    listaEntradas.add(e)
                 }
->>>>>>> Stashed changes
-=======
-            var contador = 0
-            for (e in DataProvider.listaEntradasSalidas) {
-                if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
-                    if (e.isEntrada) {
-                        contador += e.cantidad
-                    } else {
-                        contador -= e.cantidad
-                    }
-                }
->>>>>>> main
             }
 
 
                 tv_title.text = categoria.nombre
-                tv_number.text = contador.toString()
+
+                var tiposArticulos = 0
+                for (e in DataProvider.listaArticulos){
+                    if (e.categoria.nombre.equals(categoria.nombre)){
+                        tiposArticulos++
+                    }
+                }
+
+
+                tv_number.text = tiposArticulos.toString()
 
                 val color = Color.parseColor(categoria.color)
                 val drawable = GradientDrawable().apply {
@@ -187,22 +175,30 @@ class HomeFragment : Fragment() {
                 }
                 fondo.background = drawable
 
+
+
+                var art = 0
+                for (e in DataProvider.listaEntradasSalidas) {
+                    if (listaCategoriasStrings.contains(e.articulo.categoria.nombre)) {
+                        if (e.isEntrada) {
+                            art += e.cantidad
+                        } else {
+                            art -= e.cantidad
+                        }
+                    }
+                }
+
                 vista.setOnClickListener {
                     val bundle = Bundle().apply {
-                        putInt(
-                            "position",
-                            position
-                        ) // Esto es la posición de la categoría en la lista
-                        putInt(
-                            "totalArticles",
-                            contador
-                        ) // Esto es el total de artículos en esa categoría
-                        // Si quieres pasar el nombre de la categoría para filtrar, también sería útil:
+                        putInt("position", position)
+                        putInt("totalArticles", tiposArticulos)
                         putString("categoryName", categoria.nombre)
+                        putParcelableArrayList("listaEntradas", listaEntradas)
                     }
 
                     Navigation.findNavController(vista).navigate(R.id.categoriesFragment, bundle)
                 }
+
 
                 return vista
             }
@@ -211,6 +207,28 @@ class HomeFragment : Fragment() {
                 categorias.clear()
                 categorias.addAll(nuevaLista)
                 notifyDataSetChanged()
+            }
+
+            fun cargarTotalArticles(){
+                var listaIdArticulos = ArrayList<String>()
+
+                for (e in DataProvider.listaArticulos){
+                    listaIdArticulos.add(e.idArticulo)
+                }
+
+                var totalArticles = 0
+                for(e in DataProvider.listaEntradasSalidas){
+                    if(listaIdArticulos.contains(e.articulo.idArticulo)){
+                        if (e.isEntrada){
+                            totalArticles += e.cantidad
+                        }
+                        else{
+                            totalArticles -= e.cantidad
+                        }
+                    }
+                }
+                txtAll.setText(totalArticles.toString())
+
             }
         }
 }
